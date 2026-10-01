@@ -25,6 +25,13 @@ except (FileNotFoundError, json.JSONDecodeError):
     previous_state = {}
 
 current_state = {}
+# If the state file is empty, this is our first baseline run.
+first_run = len(previous_state) == 0
+
+if first_run:
+    print("FIRST RUN: Establishing stock baseline.")
+    print("Discord alerts will be suppressed for this run.")
+    print()
 
 # Get Hobbiesville Lorcana search results
 response = requests.get(
@@ -112,8 +119,10 @@ for url in urls:
         # 1. Product is new and available
         # 2. Product was sold out and becomes available
         should_alert = (
-            available
+            not first_run
+            and available
             and was_available is not True
+    )
         )
 
         if should_alert:
