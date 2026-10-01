@@ -1,70 +1,44 @@
 import requests
 
-BASE_URL = (
-    "https://store.401games.ca/collections/"
-    "disney-lorcana-trading-card-game/products.json"
+HANDLE = "disney-lorcana-the-first-chapter-starter-decks"
+
+URL = (
+    "https://store.401games.ca/products/"
+    f"{HANDLE}.js"
 )
 
 headers = {
     "User-Agent": "Mozilla/5.0"
 }
 
-all_products = []
+response = requests.get(
+    URL,
+    headers=headers,
+    timeout=30
+)
 
-page = 1
+print("Status code:", response.status_code)
 
-while True:
+if response.status_code != 200:
+    print("ERROR: Could not retrieve product.")
+    exit(1)
 
-    url = f"{BASE_URL}?limit=250&page={page}"
-
-    response = requests.get(
-        url,
-        headers=headers,
-        timeout=30
-    )
-
-    if response.status_code != 200:
-        print(f"ERROR loading page {page}")
-        break
-
-    data = response.json()
-    products = data.get("products", [])
-
-    print(
-        f"Page {page}: "
-        f"{len(products)} products"
-    )
-
-    if not products:
-        break
-
-    all_products.extend(products)
-
-    if len(products) < 250:
-        break
-
-    page += 1
+product = response.json()
 
 print()
-print("--- RESULTS ---")
-print("Total Lorcana products found:", len(all_products))
+print("--- TEST PRODUCT ---")
+print("Title:", product.get("title"))
+print("Product ID:", product.get("id"))
 
-available = 0
-sold_out = 0
+variants = product.get("variants", [])
 
-for product in all_products:
+available = any(
+    variant.get("available", False)
+    for variant in variants
+)
 
-    variants = product.get("variants", [])
-
-    is_available = any(
-        variant.get("available", False)
-        for variant in variants
-    )
-
-    if is_available:
-        available += 1
-    else:
-        sold_out += 1
-
-print("Currently available:", available)
-print("Currently sold out:", sold_out)
+print("Available:", available)
+print(
+    "URL:",
+    f"https://store.401games.ca/products/{HANDLE}"
+)
