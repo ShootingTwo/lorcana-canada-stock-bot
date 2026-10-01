@@ -1,6 +1,6 @@
 import requests
 
-URL = "https://hobbiesville.com/collections/lorcana"
+URL = "https://hobbiesville.com/"
 
 headers = {
     "User-Agent": "Mozilla/5.0"
