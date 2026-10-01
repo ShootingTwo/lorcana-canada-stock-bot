@@ -123,7 +123,6 @@ for url in urls:
             and available
             and was_available is not True
     )
-        )
 
         if should_alert:
 
