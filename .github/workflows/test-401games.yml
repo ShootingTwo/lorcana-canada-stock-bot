@@ -43,5 +43,6 @@ jobs:
             echo "No 401 Games stock changes to save."
           else
             git commit -m "Update 401 Games stock state"
-            git push
+            git pull --rebase origin main
+            git push origin main
           fi
