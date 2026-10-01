@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 
 URL = "https://hobbiesville.com/search?q=lorcana&type=product"
 
@@ -15,26 +14,16 @@ if response.status_code != 200:
     print("ERROR: Could not reach Hobbiesville.")
     exit()
 
-soup = BeautifulSoup(response.text, "html.parser")
+html = response.text
 
-print("\n--- PRODUCT LINKS FOUND ---\n")
+position = html.lower().find("lorcana")
 
-links_found = 0
+print("\n--- DATA AROUND FIRST LORCANA MATCH ---\n")
 
-for link in soup.find_all("a", href=True):
-    href = link["href"]
+if position == -1:
+    print("No Lorcana text found.")
+else:
+    start = max(0, position - 1000)
+    end = min(len(html), position + 2000)
 
-    if "/products/" in href:
-        text = link.get_text(" ", strip=True)
-
-        print("TEXT:", repr(text))
-        print("URL:", href)
-        print("---")
-
-        links_found += 1
-
-        # We only need a sample
-        if links_found >= 15:
-            break
-
-print("\nProduct links sampled:", links_found)
+    print(html[start:end])
