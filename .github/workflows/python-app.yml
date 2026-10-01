@@ -3,7 +3,11 @@ name: Hobbiesville Lorcana Stock Checker
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "0,10,20,30,40,50 * * * *"
+
+concurrency:
+  group: hobbiesville-lorcana-stock
+  cancel-in-progress: false
 
 permissions:
   contents: write
