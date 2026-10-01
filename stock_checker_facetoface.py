@@ -180,7 +180,7 @@ while True:
             "embeds": [embed]
         }
 
-        try:
+                try:
             discord_response = requests.post(
                 DISCORD_WEBHOOK_URL,
                 json=message,
@@ -198,17 +198,24 @@ while True:
                 else:
                     current_state[product_id] = was_available
 
-            print(
-                f"Discord error "
-                f"{discord_response.status_code}: "
-                f"{title}"
-            )
+                print(
+                    f"Discord error "
+                    f"{discord_response.status_code}: "
+                    f"{title}"
+                )
 
-        # Avoid rapid Discord webhook requests if
-        # several products restock simultaneously.
-        time.sleep(1)
+            # Avoid rapid Discord webhook requests if
+            # several products restock simultaneously.
+            time.sleep(1)
 
         except Exception as error:
+            # Preserve the previous state so a failed
+            # Discord request can be attempted next run.
+            if was_available is None:
+                current_state.pop(product_id, None)
+            else:
+                current_state[product_id] = was_available
+
             print(
                 f"ERROR sending Discord alert: {error}"
             )
