@@ -83,21 +83,24 @@ while True:
         handle = product.get("handle")
         image_url = None
 
+        if not product_id or not handle:
+            continue
+
+        # Get product image
         images = product.get("images", [])
 
         if images:
             first_image = images[0]
 
-        if isinstance(first_image, dict):
-            image_url = first_image.get("src")
-        elif isinstance(first_image, str):
-            image_url = first_image
+            if isinstance(first_image, dict):
+                image_url = first_image.get("src")
+            elif isinstance(first_image, str):
+                image_url = first_image
 
-    if image_url and image_url.startswith("//"):
-        image_url = "https:" + image_url
-        if not product_id or not handle:
-            continue
+        if image_url and image_url.startswith("//"):
+            image_url = "https:" + image_url
 
+        # Get product variants
         variants = product.get("variants", [])
 
         available_variants = [
@@ -110,6 +113,7 @@ while True:
 
         product_url = STORE_URL + handle
 
+        # Save current state using Shopify product ID
         current_state[product_id] = available
 
         was_available = previous_state.get(product_id)
@@ -121,6 +125,9 @@ while True:
         else:
             sold_out_products += 1
 
+        # Alert when:
+        # 1. A brand-new product appears available, or
+        # 2. A previously sold-out product becomes available.
         should_alert = (
             not first_run
             and available
@@ -151,58 +158,59 @@ while True:
         else:
             heading = "🚨 Lorcana Canada Stock Alert"
 
+        # Build Discord embed
         embed = {
-    "title": title,
-    "url": product_url,
-    "description": (
-        f"🏪 **Face to Face Games**\n"
-        f"💰 **{price_text}**\n"
-        f"🟢 IN STOCK\n\n"
-        f"🔗 **[View Product]({product_url})**"
-    )
-}
+            "title": title,
+            "url": product_url,
+            "description": (
+                f"🏪 **Face to Face Games**\n"
+                f"💰 **{price_text}**\n"
+                f"🟢 IN STOCK\n\n"
+                f"🔗 **[View Product]({product_url})**"
+            )
+        }
 
-if image_url:
-    embed["image"] = {
-        "url": image_url
-    }
+        if image_url:
+            embed["image"] = {
+                "url": image_url
+            }
 
-message = {
-    "content": f"{heading} 🇨🇦",
-    "embeds": [embed]
-}
+        message = {
+            "content": f"{heading} 🇨🇦",
+            "embeds": [embed]
+        }
 
-try:
-    discord_response = requests.post(
-        DISCORD_WEBHOOK_URL,
-        json=message,
-        timeout=30
-    )
+        try:
+            discord_response = requests.post(
+                DISCORD_WEBHOOK_URL,
+                json=message,
+                timeout=30
+            )
 
-    if discord_response.status_code in (200, 204):
-        alerts_sent += 1
-        print(f"Alert sent: {title}")
-    else:
-        print(
-            f"Discord error "
-            f"{discord_response.status_code}: {title}"
-        )
+            if discord_response.status_code in (200, 204):
+                alerts_sent += 1
+                print(f"Alert sent: {title}")
+            else:
+                print(
+                    f"Discord error "
+                    f"{discord_response.status_code}: {title}"
+                )
 
-    # Avoid rapid webhook requests if several
-    # products restock at the same time.
-    time.sleep(1)
+            # Avoid rapid webhook requests if several
+            # products restock at the same time.
+            time.sleep(1)
 
-except Exception as error:
-    print(
-        f"ERROR sending Discord alert: {error}"
-    )
+        except Exception as error:
+            print(
+                f"ERROR sending Discord alert: {error}"
+            )
 
-print(f"Page {page}: {len(products)} products")
+    print(f"Page {page}: {len(products)} products")
 
-if len(products) < 250:
-    break
+    if len(products) < 250:
+        break
 
-page += 1
+    page += 1
 
 # Save current stock state
 with open(STATE_FILE, "w") as file:
