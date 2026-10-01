@@ -137,15 +137,20 @@ for url in urls:
                 heading = "🚨 Lorcana Canada Stock Alert"
 
             message = {
-                "content": (
-                    f"{heading} 🇨🇦\n\n"
-                    f"**{title}**\n"
-                    f"🏪 Hobbiesville\n"
-                    f"💰 {price_text}\n"
-                    f"{status}\n"
-                    f"🔗 {product_url}"
-                )
-            }
+    "content": f"{heading} 🇨🇦",
+    "embeds": [
+        {
+            "title": title,
+            "url": product_url,
+            "description": (
+                f"🏪 **Hobbiesville**\n"
+                f"💰 **{price_text}**\n"
+                f"{status}\n\n"
+                f"🔗 **[View Product]({product_url})**"
+            )
+        }
+    ]
+}
 
             discord_response = requests.post(
                 DISCORD_WEBHOOK_URL,
