@@ -1,4 +1,5 @@
 import requests
+import re
 
 URL = "https://hobbiesville.com/search?q=lorcana&type=product"
 
@@ -15,30 +16,52 @@ if response.status_code != 200:
     exit()
 
 html = response.text
-lower_html = html.lower()
 
-positions = []
-start = 0
+# Hobbiesville embeds product information with escaped JSON.
+pattern = re.compile(
+    r'\\"price\\":\{\\"amount\\":\\"?([0-9.]+)\\"?,'
+    r'\\"currencyCode\\":\\"CAD\\"\},'
+    r'\\"product\\":\{\\"title\\":\\"(.*?)\\",'
+    r'\\"vendor\\":\\"(.*?)\\",'
+    r'\\"id\\":\\"(.*?)\\",'
+    r'\\"untranslatedTitle\\":\\".*?\\",'
+    r'\\"url\\":\\"(.*?)\\"'
+)
 
-while True:
-    position = lower_html.find("lorcana", start)
+matches = pattern.findall(html)
 
-    if position == -1:
-        break
+products = {}
 
-    positions.append(position)
-    start = position + 7
+for price, title, vendor, product_id, url in matches:
 
-print("Total Lorcana occurrences:", len(positions))
+    title = title.replace("\\u0026", "&")
+    url = url.replace("\\u0026", "&").replace("\\/", "/")
+
+    # Remove Shopify search tracking from the URL
+    url = url.split("?")[0]
+
+    if url.startswith("/"):
+        url = "https://www.hobbiesville.com" + url
+
+    # Only keep Lorcana products
+    if "lorcana" not in title.lower():
+        continue
+
+    products[product_id] = {
+        "title": title,
+        "price": price,
+        "vendor": vendor,
+        "url": url
+    }
+
+print("\n--- LORCANA PRODUCTS ---\n")
+print("Unique Lorcana products found:", len(products))
 print()
 
-# Show samples from farther into the page,
-# rather than the first occurrence in the URL.
-for number, position in enumerate(positions[20:25], start=21):
+for number, product in enumerate(products.values(), start=1):
 
-    print(f"\n===== LORCANA OCCURRENCE #{number} =====\n")
-
-    snippet_start = max(0, position - 500)
-    snippet_end = min(len(html), position + 1000)
-
-    print(html[snippet_start:snippet_end])
+    print(f"{number}. {product['title']}")
+    print(f"   Price: ${product['price']} CAD")
+    print(f"   Vendor: {product['vendor']}")
+    print(f"   URL: {product['url']}")
+    print()
