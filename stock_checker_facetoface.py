@@ -191,14 +191,22 @@ while True:
                 alerts_sent += 1
                 print(f"Alert sent: {title}")
             else:
-                print(
-                    f"Discord error "
-                    f"{discord_response.status_code}: {title}"
-                )
+                # Keep the previous state so the alert will be
+                # attempted again on the next checker run.
+                if was_available is None:
+                    current_state.pop(product_id, None)
+                else:
+                    current_state[product_id] = was_available
 
-            # Avoid rapid webhook requests if several
-            # products restock at the same time.
-            time.sleep(1)
+            print(
+                f"Discord error "
+                f"{discord_response.status_code}: "
+                f"{title}"
+            )
+
+        # Avoid rapid Discord webhook requests if
+        # several products restock simultaneously.
+        time.sleep(1)
 
         except Exception as error:
             print(
