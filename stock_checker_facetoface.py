@@ -151,20 +151,25 @@ while True:
         else:
             heading = "🚨 Lorcana Canada Stock Alert"
 
-        message = {
+        embed = {
+    "title": title,
+    "url": product_url,
+    "description": (
+        f"🏪 **Face to Face Games**\n"
+        f"💰 **{price_text}**\n"
+        f"🟢 IN STOCK\n\n"
+        f"🔗 **[View Product]({product_url})**"
+    )
+}
+
+if image_url:
+    embed["image"] = {
+        "url": image_url
+    }
+
+message = {
     "content": f"{heading} 🇨🇦",
-    "embeds": [
-        {
-            "title": title,
-            "url": product_url,
-            "description": (
-                f"🏪 **Face to Face Games**\n"
-                f"💰 **{price_text}**\n"
-                f"🟢 IN STOCK\n\n"
-                f"🔗 **[View Product]({product_url})**"
-            )
-        }
-    ]
+    "embeds": [embed]
 }
 
         try:
