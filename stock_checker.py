@@ -164,7 +164,14 @@ for url in urls:
                 "Discord response:",
                 discord_response.status_code
             )
+    if discord_response.status_code in (200, 204):
+        current_state[product_url] = available
+    else:
+        print("Discord alert failed. Previous stock state preserved.")
 
+    if not should_alert:
+        current_state[product_url] = available    
+        
         print()
 
         # Avoid rapid requests to Hobbiesville
