@@ -5,6 +5,10 @@ on:
   schedule:
       - cron: "6,16,26,36,46,56 * * * *"
 
+concurrency:
+  group: facetoface-lorcana-stock
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
