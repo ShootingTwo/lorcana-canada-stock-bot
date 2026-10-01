@@ -15,15 +15,30 @@ if response.status_code != 200:
     exit()
 
 html = response.text
+lower_html = html.lower()
 
-position = html.lower().find("lorcana")
+positions = []
+start = 0
 
-print("\n--- DATA AROUND FIRST LORCANA MATCH ---\n")
+while True:
+    position = lower_html.find("lorcana", start)
 
-if position == -1:
-    print("No Lorcana text found.")
-else:
-    start = max(0, position - 1000)
-    end = min(len(html), position + 2000)
+    if position == -1:
+        break
 
-    print(html[start:end])
+    positions.append(position)
+    start = position + 7
+
+print("Total Lorcana occurrences:", len(positions))
+print()
+
+# Show samples from farther into the page,
+# rather than the first occurrence in the URL.
+for number, position in enumerate(positions[20:25], start=21):
+
+    print(f"\n===== LORCANA OCCURRENCE #{number} =====\n")
+
+    snippet_start = max(0, position - 500)
+    snippet_end = min(len(html), position + 1000)
+
+    print(html[snippet_start:snippet_end])
