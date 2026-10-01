@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 
 URL = "https://store.401games.ca/pages/search-results?q=lorcana"
 
@@ -19,24 +18,28 @@ if response.status_code != 200:
     print("ERROR: Could not reach 401 Games.")
     exit()
 
-soup = BeautifulSoup(response.text, "html.parser")
+html = response.text
+lower_html = html.lower()
 
-print("\n--- 401 GAMES PRODUCT LINKS ---\n")
+positions = []
+start = 0
 
-links = []
+while True:
+    position = lower_html.find("lorcana", start)
 
-for link in soup.find_all("a", href=True):
-    href = link["href"]
-    text = link.get_text(" ", strip=True)
+    if position == -1:
+        break
 
-    if "/products/" in href:
-        links.append((text, href))
+    positions.append(position)
+    start = position + 7
 
-print("Product links found:", len(links))
-print()
+print("Total Lorcana occurrences:", len(positions))
 
-for number, (text, href) in enumerate(links[:20], start=1):
-    print(f"{number}.")
-    print("TEXT:", repr(text))
-    print("URL:", href)
-    print()
+for number, position in enumerate(positions, start=1):
+
+    print(f"\n===== LORCANA OCCURRENCE #{number} =====\n")
+
+    snippet_start = max(0, position - 500)
+    snippet_end = min(len(html), position + 1000)
+
+    print(html[snippet_start:snippet_end])
