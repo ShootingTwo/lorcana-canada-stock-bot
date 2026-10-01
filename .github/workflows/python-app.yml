@@ -39,5 +39,6 @@ jobs:
             echo "No stock changes to save."
           else
             git commit -m "Update Hobbiesville stock state"
-            git push
+            git pull --rebase origin main
+            git push origin main
           fi
