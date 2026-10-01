@@ -78,7 +78,20 @@ while True:
         product_id = str(product.get("id"))
         title = product.get("title", "Disney Lorcana Product")
         handle = product.get("handle")
+        image_url = None
 
+        images = product.get("images", [])
+
+        if images:
+            first_image = images[0]
+
+            if isinstance(first_image, dict):
+                image_url = first_image.get("src")
+            elif isinstance(first_image, str):
+                image_url = first_image
+
+    if image_url and image_url.startswith("//"):
+        image_url = "https:" + image_url
         if not product_id or not handle:
             continue
 
