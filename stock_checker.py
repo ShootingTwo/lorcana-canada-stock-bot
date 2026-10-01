@@ -26,7 +26,14 @@ except (FileNotFoundError, json.JSONDecodeError):
     previous_state = {}
 
 
-current_state = {}
+# Start with everything we already know about.
+#
+# Hobbiesville's search page does not always return the exact same
+# set of products on every request. Starting with the previous state
+# prevents temporarily missing products from being forgotten and
+# incorrectly treated as brand-new products when they reappear.
+current_state = previous_state.copy()
+
 
 # If the state file is empty, this is our first baseline run.
 first_run = len(previous_state) == 0
@@ -66,7 +73,8 @@ urls = re.findall(
 
 urls = list(dict.fromkeys(urls))
 
-print(f"Lorcana products found: {len(urls)}")
+print(f"Lorcana products found in this search: {len(urls)}")
+print(f"Products already known: {len(previous_state)}")
 print()
 
 
@@ -92,11 +100,8 @@ for url in urls:
         if response.status_code != 200:
             print("Could not check:", product_url)
 
-            # Preserve the old state if Hobbiesville fails
-            # to return this particular product.
-            if product_url in previous_state:
-                current_state[product_url] = previous_state[product_url]
-
+            # Because current_state began as a copy of previous_state,
+            # the previous status is automatically preserved.
             continue
 
 
@@ -163,15 +168,22 @@ for url in urls:
             price_text = "Price unavailable"
 
 
+        # Determine preorder status from the current product title.
+        #
+        # We intentionally do NOT use the URL because Hobbiesville
+        # may retain "-pre-order" in an old product URL even after
+        # the product has become normal in-stock inventory.
         is_preorder = (
             "pre-order" in title.lower()
             or "preorder" in title.lower()
         )
 
 
-        current_state[product_url] = available
-
+        # IMPORTANT: Read the previous status BEFORE updating
+        # current_state.
         was_available = previous_state.get(product_url)
+
+        current_state[product_url] = available
 
 
         print(title)
@@ -181,7 +193,7 @@ for url in urls:
 
         # Alert when:
         # 1. An existing sold-out product becomes available, or
-        # 2. A brand-new product appears and is available.
+        # 2. A genuinely brand-new product appears and is available.
         #
         # The first baseline run does not send alerts.
         should_alert = (
@@ -280,15 +292,15 @@ for url in urls:
     except Exception as error:
         print(f"ERROR checking {product_url}: {error}")
 
-        # If checking an existing product failed, preserve its
-        # previous state instead of accidentally losing it.
-        if product_url in previous_state:
-            current_state[product_url] = previous_state[product_url]
-
+        # current_state already contains the previous value
+        # for known products, so nothing needs to be removed.
         print()
 
 
-# Save current availability
+# Save the accumulated availability state.
+#
+# Products temporarily absent from Hobbiesville's search results
+# remain in this file with their last known status.
 with open(STATE_FILE, "w") as file:
     json.dump(
         current_state,
@@ -299,5 +311,6 @@ with open(STATE_FILE, "w") as file:
 
 print()
 print("--- HOBBIESVILLE RESULTS ---")
-print(f"Products tracked: {len(current_state)}")
+print(f"Products found this run: {len(urls)}")
+print(f"Total products tracked: {len(current_state)}")
 print("Hobbiesville stock state updated.")
