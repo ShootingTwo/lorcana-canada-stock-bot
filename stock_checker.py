@@ -141,22 +141,27 @@ for url in urls:
                 heading = "♻️ Lorcana Restock Alert"
             else:
                 heading = "🚨 Lorcana Canada Stock Alert"
+            embed = {
+                "title": title,
+                "url": product_url,
+                "description": (
+                    f"🏪 **Hobbiesville**\n"
+                    f"💰 **{price_text}**\n"
+                    f"{status}\n\n"
+                    f"🔗 **[View Product]({product_url})**"
+                )
+            }
 
+            if image_url:
+                embed["image"] = {
+                    "url": image_url
+                }
+
+            
             message = {
-    "content": f"{heading} 🇨🇦",
-    "embeds": [
-        {
-            "title": title,
-            "url": product_url,
-            "description": (
-                f"🏪 **Hobbiesville**\n"
-                f"💰 **{price_text}**\n"
-                f"{status}\n\n"
-                f"🔗 **[View Product]({product_url})**"
-            )
-        }
-    ]
-}
+                "content": f"{heading} 🇨🇦",
+                "embeds": [embed]
+            }
 
             discord_response = requests.post(
                 DISCORD_WEBHOOK_URL,
