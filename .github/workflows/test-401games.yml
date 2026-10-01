@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "15,45 * * * *"
 
+concurrency:
+  group: 401-games-stock-checker
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
