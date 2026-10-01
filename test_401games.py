@@ -11,7 +11,9 @@ headers = {
 
 all_products = []
 
-for page in range(1, 11):
+page = 1
+
+while True:
 
     url = f"{BASE_URL}?limit=250&page={page}"
 
@@ -38,9 +40,10 @@ for page in range(1, 11):
 
     all_products.extend(products)
 
-    # Fewer than 250 means this was the last page
     if len(products) < 250:
         break
+
+    page += 1
 
 print()
 print("--- RESULTS ---")
