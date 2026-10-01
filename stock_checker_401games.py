@@ -172,25 +172,25 @@ message = {
     "embeds": [embed]
 }
 
-try:
-    discord_response = requests.post(
-        DISCORD_WEBHOOK_URL,
-        json=message,
-        timeout=30
-    )
+    try:
+        discord_response = requests.post(
+            DISCORD_WEBHOOK_URL,
+            json=message,
+            timeout=30
+        )
 
-    if discord_response.status_code in (200, 204):
-        alerts_sent += 1
-        print(f"Alert sent: {title}")
-    else:
-        print(
-                    f"Discord error "
-                    f"{discord_response.status_code}: {title}"
-                )
+        if discord_response.status_code in (200, 204):
+            alerts_sent += 1
+            print(f"Alert sent: {title}")
+        else:
+            print(
+                f"Discord error "
+                f"{discord_response.status_code}: {title}"
+            )
 
-    # Avoid rapid Discord webhook requests if
-    # several products restock simultaneously.
-    time.sleep(1)
+        # Avoid rapid Discord webhook requests if
+        # several products restock simultaneously.
+        time.sleep(1)
 
     except Exception as error:
         print(f"ERROR sending Discord alert: {error}")
