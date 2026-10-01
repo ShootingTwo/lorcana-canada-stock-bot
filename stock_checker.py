@@ -17,51 +17,52 @@ if response.status_code != 200:
 
 html = response.text
 
-# Hobbiesville embeds product information with escaped JSON.
-pattern = re.compile(
-    r'\\"price\\":\{\\"amount\\":\\"?([0-9.]+)\\"?,'
-    r'\\"currencyCode\\":\\"CAD\\"\},'
-    r'\\"product\\":\{\\"title\\":\\"(.*?)\\",'
-    r'\\"vendor\\":\\"(.*?)\\",'
-    r'\\"id\\":\\"(.*?)\\",'
-    r'\\"untranslatedTitle\\":\\".*?\\",'
-    r'\\"url\\":\\"(.*?)\\"'
+# Find Lorcana product titles
+titles = re.findall(
+    r'\\"title\\":\\"([^"]*[Ll]orcana[^"]*)\\"',
+    html
 )
 
-matches = pattern.findall(html)
+# Find CAD prices
+prices = re.findall(
+    r'\\"amount\\":\\"?([0-9.]+)\\"?.{0,100}?'
+    r'\\"currencyCode\\":\\"CAD\\"',
+    html
+)
 
-products = {}
+# Find Hobbiesville product URLs
+urls = re.findall(
+    r'\\"url\\":\\"(\\/products\\/[^"]+)',
+    html
+)
 
-for price, title, vendor, product_id, url in matches:
+print("\n--- DATA EXTRACTION TEST ---\n")
 
-    title = title.replace("\\u0026", "&")
-    url = url.replace("\\u0026", "&").replace("\\/", "/")
+print("Lorcana titles found:", len(titles))
+print("CAD prices found:", len(prices))
+print("Product URLs found:", len(urls))
 
-    # Remove Shopify search tracking from the URL
-    url = url.split("?")[0]
+print("\n--- SAMPLE LORCANA TITLES ---\n")
 
-    if url.startswith("/"):
-        url = "https://www.hobbiesville.com" + url
+seen = set()
+count = 0
 
-    # Only keep Lorcana products
-    if "lorcana" not in title.lower():
+for title in titles:
+
+    title = (
+        title
+        .replace("\\u0026", "&")
+        .replace("\\/", "/")
+    )
+
+    if title in seen:
         continue
 
-    products[product_id] = {
-        "title": title,
-        "price": price,
-        "vendor": vendor,
-        "url": url
-    }
+    seen.add(title)
 
-print("\n--- LORCANA PRODUCTS ---\n")
-print("Unique Lorcana products found:", len(products))
-print()
+    print(title)
 
-for number, product in enumerate(products.values(), start=1):
+    count += 1
 
-    print(f"{number}. {product['title']}")
-    print(f"   Price: ${product['price']} CAD")
-    print(f"   Vendor: {product['vendor']}")
-    print(f"   URL: {product['url']}")
-    print()
+    if count >= 10:
+        break
