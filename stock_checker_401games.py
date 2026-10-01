@@ -227,10 +227,3 @@ print(f"Available: {available_products}")
 print(f"Sold out: {sold_out_products}")
 print(f"Discord alerts sent: {alerts_sent}")
 print("401 Games stock state updated.")
-
-for product_id, is_available in current_state.items():
-    if is_available:
-        print()
-        print("--- TEST CANDIDATE ---")
-        print("Available Product ID:", product_id)
-        break
