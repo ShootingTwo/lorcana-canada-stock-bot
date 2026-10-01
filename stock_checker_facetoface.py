@@ -188,7 +188,13 @@ with open(STATE_FILE, "w") as file:
         file,
         indent=2
     )
-
+# Print one available product for controlled testing
+for product_id, is_available in current_state.items():
+    if is_available:
+        print()
+        print("--- TEST CANDIDATE ---")
+        print("Available Product ID:", product_id)
+        break
 print()
 print("--- FACE TO FACE RESULTS ---")
 print(f"Total products: {total_products}")
