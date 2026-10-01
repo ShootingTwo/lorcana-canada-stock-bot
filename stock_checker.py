@@ -90,7 +90,10 @@ for url in urls:
         images = product.get("images", [])
 
         if images:
-            image_url = images[0].get("src")
+            image_url = images[0]
+
+            if image_url.startswith("//"):
+                image_url = "https:" + image_url
         
         variants = product.get("variants", [])
 
