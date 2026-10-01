@@ -17,52 +17,40 @@ if response.status_code != 200:
 
 html = response.text
 
-# Find Lorcana product titles
 titles = re.findall(
     r'\\"title\\":\\"([^"]*[Ll]orcana[^"]*)\\"',
     html
 )
 
-# Find CAD prices
 prices = re.findall(
     r'\\"price\\":\{\\"amount\\":([0-9.]+),'
     r'\\"currencyCode\\":\\"CAD\\"\}',
     html
 )
 
-# Find Hobbiesville product URLs
 urls = re.findall(
     r'\\"url\\":\\"(\\/products\\/[^"]+)',
     html
 )
 
-print("\n--- DATA EXTRACTION TEST ---\n")
+print("\n--- HOBBIESVILLE LORCANA PRODUCTS ---\n")
 
-print("Lorcana titles found:", len(titles))
-print("CAD prices found:", len(prices))
-print("Product URLs found:", len(urls))
+for number, (title, price, url) in enumerate(
+    zip(titles, prices, urls),
+    start=1
+):
+    title = title.replace("\\u0026", "&")
 
-print("\n--- SAMPLE LORCANA TITLES ---\n")
-
-seen = set()
-count = 0
-
-for title in titles:
-
-    title = (
-        title
+    url = (
+        url
         .replace("\\u0026", "&")
         .replace("\\/", "/")
+        .split("?")[0]
     )
 
-    if title in seen:
-        continue
+    full_url = "https://www.hobbiesville.com" + url
 
-    seen.add(title)
-
-    print(title)
-
-    count += 1
-
-    if count >= 10:
-        break
+    print(f"{number}. {title}")
+    print(f"   Price: ${float(price):.2f} CAD")
+    print(f"   URL: {full_url}")
+    print()
