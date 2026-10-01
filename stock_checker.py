@@ -85,7 +85,13 @@ for url in urls:
             "title",
             "Disney Lorcana Product"
         )
+        image_url = None
 
+        images = product.get("images", [])
+
+        if images:
+            image_url = images[0].get("src")
+        
         variants = product.get("variants", [])
 
         available = any(
