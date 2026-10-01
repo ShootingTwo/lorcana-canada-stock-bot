@@ -164,9 +164,7 @@ for url in urls:
 
 
         is_preorder = (
-            "pre-order" in product_url.lower()
-            or "preorder" in product_url.lower()
-            or "pre-order" in title.lower()
+            "pre-order" in title.lower()
             or "preorder" in title.lower()
         )
 
