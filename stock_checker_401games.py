@@ -44,9 +44,7 @@ sold_out_products = 0
 alerts_sent = 0
 
 while True:
-
     url = f"{BASE_URL}?limit=250&page={page}"
-
     print(f"Checking page {page}...")
 
     try:
@@ -74,12 +72,18 @@ while True:
         break
 
     for product in products:
-
         product_id = str(product.get("id"))
-        title = product.get("title", "Disney Lorcana Product")
+        title = product.get(
+            "title",
+            "Disney Lorcana Product"
+        )
         handle = product.get("handle")
-        image_url = None
 
+        if not product_id or not handle:
+            continue
+
+        # Get the product image
+        image_url = None
         images = product.get("images", [])
 
         if images:
@@ -92,10 +96,8 @@ while True:
 
         if image_url and image_url.startswith("//"):
             image_url = "https:" + image_url
-        if not product_id or not handle:
-            continue
-    
-            variants = product.get("variants", [])
+
+        variants = product.get("variants", [])
 
         available_variants = [
             variant
@@ -137,7 +139,9 @@ while True:
 
         for variant in available_variants:
             try:
-                prices.append(float(variant.get("price")))
+                prices.append(
+                    float(variant.get("price"))
+                )
             except (TypeError, ValueError):
                 pass
 
@@ -152,49 +156,60 @@ while True:
             heading = "🚨 Lorcana Canada Stock Alert"
 
         embed = {
-    "title": title,
-    "url": product_url,
-    "description": (
-        f"🏪 **401 Games**\n"
-        f"💰 **{price_text}**\n"
-        f"🟢 IN STOCK\n\n"
-        f"🔗 **[View Product]({product_url})**"
-    )
-}
+            "title": title,
+            "url": product_url,
+            "description": (
+                f"🏪 **401 Games**\n"
+                f"💰 **{price_text}**\n"
+                f"🟢 IN STOCK\n\n"
+                f"🔗 **[View Product]({product_url})**"
+            )
+        }
 
-if image_url:
-    embed["image"] = {
-        "url": image_url
-    }
+        if image_url:
+            embed["image"] = {
+                "url": image_url
+            }
 
-message = {
-    "content": f"{heading} 🇨🇦",
-    "embeds": [embed]
-}
+        message = {
+            "content": f"{heading} 🇨🇦",
+            "embeds": [embed]
+        }
 
-discord_response = requests.post(
-    DISCORD_WEBHOOK_URL,
-    json=message,
-    timeout=30
-)
+        try:
+            discord_response = requests.post(
+                DISCORD_WEBHOOK_URL,
+                json=message,
+                timeout=30
+            )
 
-if discord_response.status_code in (200, 204):
-    alerts_sent += 1
-    print(f"Alert sent: {title}")
-else:
+            if discord_response.status_code in (200, 204):
+                alerts_sent += 1
+                print(f"Alert sent: {title}")
+            else:
+                print(
+                    f"Discord error "
+                    f"{discord_response.status_code}: "
+                    f"{title}"
+                )
+
+            # Avoid rapid Discord webhook requests if
+            # several products restock simultaneously.
+            time.sleep(1)
+
+        except Exception as error:
+            print(
+                f"ERROR sending Discord alert: {error}"
+            )
+
     print(
-        f"Discord error "
-        f"{discord_response.status_code}: {title}"
+        f"Page {page}: "
+        f"{len(products)} products"
     )
 
-# Avoid rapid Discord webhook requests if
-# several products restock simultaneously.
-time.sleep(1)
-    print(f"Page {page}: {len(products)} products")
-    
     if len(products) < 250:
         break
-    
+
     page += 1
 
 # Save current stock state
