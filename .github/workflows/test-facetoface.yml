@@ -1,10 +1,13 @@
-name: Test Face to Face Games
+name: Face to Face Lorcana Stock Checker
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  test-facetoface:
+  stock-checker-facetoface:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +20,22 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install requests
 
-      - name: Test Face to Face Games
-        run: python test_facetoface.py
+      - name: Check Face to Face Games
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python stock_checker_facetoface.py
+
+      - name: Save Face to Face stock state
+        run: |
+          git config user.name "Lorcana Stock Bot"
+          git config user.email "actions@github.com"
+          git add stock_state_facetoface.json
+
+          if git diff --cached --quiet; then
+            echo "No Face to Face stock changes to save."
+          else
+            git commit -m "Update Face to Face stock state"
+            git push
+          fi
