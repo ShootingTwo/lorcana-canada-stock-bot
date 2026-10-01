@@ -90,12 +90,12 @@ while True:
             elif isinstance(first_image, str):
                 image_url = first_image
 
-    if image_url and image_url.startswith("//"):
-        image_url = "https:" + image_url
+        if image_url and image_url.startswith("//"):
+            image_url = "https:" + image_url
         if not product_id or not handle:
             continue
-
-        variants = product.get("variants", [])
+    
+            variants = product.get("variants", [])
 
         available_variants = [
             variant
@@ -190,12 +190,12 @@ else:
 # Avoid rapid Discord webhook requests if
 # several products restock simultaneously.
 time.sleep(1)
-print(f"Page {page}: {len(products)} products")
-
-if len(products) < 250:
-    break
-
-page += 1
+    print(f"Page {page}: {len(products)} products")
+    
+    if len(products) < 250:
+        break
+    
+    page += 1
 
 # Save current stock state
 with open(STATE_FILE, "w") as file:
