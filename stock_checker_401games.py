@@ -190,7 +190,7 @@ else:
 # Avoid rapid Discord webhook requests if
 # several products restock simultaneously.
 time.sleep(1)
-print(f"Page {page}: {len(products)} products")
+    print(f"Page {page}: {len(products)} products")
 
     if len(products) < 250:
         break
