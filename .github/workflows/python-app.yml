@@ -20,4 +20,6 @@ jobs:
         run: pip install requests beautifulsoup4
 
       - name: Test Hobbiesville
+        env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python stock_checker.py
