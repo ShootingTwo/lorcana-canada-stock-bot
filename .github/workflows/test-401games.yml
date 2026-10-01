@@ -1,0 +1,23 @@
+name: Test 401 Games
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-401-games:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository files
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Test 401 Games
+        run: python test_401games.py
