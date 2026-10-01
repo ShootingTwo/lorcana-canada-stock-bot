@@ -172,18 +172,18 @@ message = {
     "embeds": [embed]
 }
 
-        try:
-            discord_response = requests.post(
-                DISCORD_WEBHOOK_URL,
-                json=message,
-                timeout=30
-            )
+try:
+    discord_response = requests.post(
+        DISCORD_WEBHOOK_URL,
+        json=message,
+        timeout=30
+    )
 
-            if discord_response.status_code in (200, 204):
-                alerts_sent += 1
-                print(f"Alert sent: {title}")
-            else:
-                print(
+    if discord_response.status_code in (200, 204):
+        alerts_sent += 1
+        print(f"Alert sent: {title}")
+    else:
+        print(
                     f"Discord error "
                     f"{discord_response.status_code}: {title}"
                 )
