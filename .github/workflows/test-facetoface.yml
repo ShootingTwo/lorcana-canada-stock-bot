@@ -2,6 +2,8 @@ name: Face to Face Lorcana Stock Checker
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "5,35 * * * *"
 
 permissions:
   contents: write
