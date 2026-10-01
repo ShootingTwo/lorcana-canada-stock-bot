@@ -187,6 +187,13 @@ while True:
                 alerts_sent += 1
                 print(f"Alert sent: {title}")
             else:
+                # Keep the previous state so the alert will be
+                # attempted again on the next checker run.
+                if was_available is None:
+                    current_state.pop(product_id, None)
+                else:
+                    current_state[product_id] = was_available
+
                 print(
                     f"Discord error "
                     f"{discord_response.status_code}: "
