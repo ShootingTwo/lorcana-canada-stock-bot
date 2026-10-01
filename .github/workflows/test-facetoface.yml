@@ -1,0 +1,23 @@
+name: Test Face to Face Games
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-facetoface:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository files
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Test Face to Face Games
+        run: python test_facetoface.py
