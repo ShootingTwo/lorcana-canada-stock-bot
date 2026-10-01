@@ -1,10 +1,13 @@
-name: Test 401 Games
+name: 401 Games Lorcana Stock Checker
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  test-401-games:
+  stock-checker-401:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +20,22 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install requests
 
-      - name: Test 401 Games
-        run: python test_401games.py
+      - name: Check 401 Games
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python stock_checker_401games.py
+
+      - name: Save 401 Games stock state
+        run: |
+          git config user.name "Lorcana Stock Bot"
+          git config user.email "actions@github.com"
+          git add stock_state_401games.json
+
+          if git diff --cached --quiet; then
+            echo "No 401 Games stock changes to save."
+          else
+            git commit -m "Update 401 Games stock state"
+            git push
+          fi
