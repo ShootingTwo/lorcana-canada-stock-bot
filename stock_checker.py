@@ -1,6 +1,6 @@
 import requests
 import re
-import json
+import time
 
 SEARCH_URL = "https://hobbiesville.com/search?q=lorcana&type=product"
 
@@ -9,6 +9,11 @@ headers = {
 }
 
 response = requests.get(SEARCH_URL, headers=headers, timeout=30)
+
+if response.status_code != 200:
+    print("ERROR: Could not reach Hobbiesville.")
+    exit()
+
 html = response.text
 
 urls = re.findall(
@@ -16,55 +21,76 @@ urls = re.findall(
     html
 )
 
-if not urls:
-    print("ERROR: No products found.")
-    exit()
+# Remove duplicate URLs while preserving order
+urls = list(dict.fromkeys(urls))
 
-url = (
-    urls[0]
-    .replace("\\u0026", "&")
-    .replace("\\/", "/")
-    .split("?")[0]
-)
-
-product_url = "https://www.hobbiesville.com" + url
-
-# Shopify stores commonly expose product information as JSON
-json_url = product_url + ".js"
-
-print("Testing product:")
-print(product_url)
-print()
-print("JSON endpoint:")
-print(json_url)
+print(f"Lorcana products found: {len(urls)}")
 print()
 
-response = requests.get(json_url, headers=headers, timeout=30)
+for number, url in enumerate(urls, start=1):
 
-print("Status code:", response.status_code)
+    url = (
+        url
+        .replace("\\u0026", "&")
+        .replace("\\/", "/")
+        .split("?")[0]
+    )
 
-if response.status_code != 200:
-    print("ERROR: Product JSON could not be reached.")
-    exit()
+    product_url = "https://www.hobbiesville.com" + url
+    json_url = product_url + ".js"
 
-try:
-    product = response.json()
-except Exception:
-    print("ERROR: Response was not valid JSON.")
-    print(response.text[:1000])
-    exit()
+    try:
+        response = requests.get(
+            json_url,
+            headers=headers,
+            timeout=30
+        )
 
-print("\n--- PRODUCT AVAILABILITY ---\n")
+        if response.status_code != 200:
+            print(f"{number}. ERROR loading {product_url}")
+            continue
 
-print("Title:", product.get("title"))
+        product = response.json()
 
-variants = product.get("variants", [])
+        title = product.get("title", "Unknown Product")
+        variants = product.get("variants", [])
 
-print("Variants found:", len(variants))
-print()
+        available = any(
+            variant.get("available", False)
+            for variant in variants
+        )
 
-for variant in variants:
-    print("Variant:", variant.get("title"))
-    print("Available:", variant.get("available"))
-    print("Price:", variant.get("price"))
-    print("---")
+        prices = [
+            variant.get("price")
+            for variant in variants
+            if variant.get("price") is not None
+        ]
+
+        if prices:
+            price = min(prices) / 100
+            price_text = f"${price:.2f} CAD"
+        else:
+            price_text = "Price unavailable"
+
+        if "pre-order" in product_url.lower():
+            product_type = "PREORDER"
+        else:
+            product_type = "IN STOCK"
+
+        if available:
+            status = f"✅ AVAILABLE ({product_type})"
+        else:
+            status = "❌ SOLD OUT"
+
+        print(f"{number}. {title}")
+        print(f"   {status}")
+        print(f"   {price_text}")
+        print(f"   {product_url}")
+        print()
+
+        # Be polite to the store's server
+        time.sleep(1)
+
+    except Exception as error:
+        print(f"{number}. ERROR: {error}")
+        print()
