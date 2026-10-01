@@ -139,15 +139,20 @@ while True:
             heading = "🚨 Lorcana Canada Stock Alert"
 
         message = {
-            "content": (
-                f"{heading} 🇨🇦\n\n"
-                f"**{title}**\n"
-                f"🏪 Face to Face Games\n"
-                f"💰 {price_text}\n"
-                f"🟢 IN STOCK\n"
-                f"🔗 {product_url}"
+    "content": f"{heading} 🇨🇦",
+    "embeds": [
+        {
+            "title": title,
+            "url": product_url,
+            "description": (
+                f"🏪 **Face to Face Games**\n"
+                f"💰 **{price_text}**\n"
+                f"🟢 IN STOCK\n\n"
+                f"🔗 **[View Product]({product_url})**"
             )
         }
+    ]
+}
 
         try:
             discord_response = requests.post(
