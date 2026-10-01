@@ -106,9 +106,13 @@ for url in urls:
             price_text = "Price unavailable"
 
         is_preorder = "pre-order" in product_url.lower()
+ 
+        was_available if was_available is not None else available
+)
 
-        current_state[product_url] = available
-
+        # Preserve the previous state until any required Discord alert succeeds.
+        current_state[product_url] = (
+ 
         was_available = previous_state.get(product_url)
 
         print(title)
