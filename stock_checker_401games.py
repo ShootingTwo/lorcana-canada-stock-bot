@@ -188,14 +188,14 @@ try:
                     f"{discord_response.status_code}: {title}"
                 )
 
-            # Avoid rapid Discord webhook requests if
-            # several products restock simultaneously.
-            time.sleep(1)
+    # Avoid rapid Discord webhook requests if
+    # several products restock simultaneously.
+    time.sleep(1)
 
-        except Exception as error:
-            print(f"ERROR sending Discord alert: {error}")
+    except Exception as error:
+        print(f"ERROR sending Discord alert: {error}")
 
-    print(f"Page {page}: {len(products)} products")
+print(f"Page {page}: {len(products)} products")
 
     if len(products) < 250:
         break
