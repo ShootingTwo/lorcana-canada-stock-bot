@@ -107,12 +107,10 @@ for url in urls:
 
         is_preorder = "pre-order" in product_url.lower()
  
+        current_state[product_url] = available
+
         was_available = previous_state.get(product_url)
 
-        # Preserve the previous state until any required Discord alert succeeds.
-        current_state[product_url] = (
-            was_available if was_available is not None else available
-        )
         print(title)
         print("Available:", available)
         print("Previously:", was_available)
@@ -163,14 +161,7 @@ for url in urls:
             print(
                 "Discord response:",
                 discord_response.status_code
-            )
-    if discord_response.status_code in (200, 204):
-        current_state[product_url] = available
-    else:
-        print("Discord alert failed. Previous stock state preserved.")
-
-    if not should_alert:
-        current_state[product_url] = available    
+            )  
         
         print()
 
