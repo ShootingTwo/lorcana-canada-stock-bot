@@ -1,64 +1,69 @@
 import requests
 
-URL = (
+BASE_URL = (
     "https://facetofacegames.com/collections/"
-    "lorcana/products.json?limit=250&page=1"
+    "lorcana/products.json"
 )
 
 headers = {
     "User-Agent": "Mozilla/5.0"
 }
 
-response = requests.get(
-    URL,
-    headers=headers,
-    timeout=30
-)
+all_products = []
+page = 1
 
-print("Status code:", response.status_code)
-print("Content type:", response.headers.get("content-type"))
-print("Page size:", len(response.text))
+while True:
 
-if response.status_code != 200:
-    print("ERROR: Could not reach Face to Face product feed.")
-    exit()
+    url = f"{BASE_URL}?limit=250&page={page}"
 
-try:
+    response = requests.get(
+        url,
+        headers=headers,
+        timeout=30
+    )
+
+    if response.status_code != 200:
+        print(
+            f"ERROR: Page {page} returned "
+            f"{response.status_code}"
+        )
+        break
+
     data = response.json()
-except Exception:
-    print("ERROR: Response was not JSON.")
-    print(response.text[:1000])
-    exit()
+    products = data.get("products", [])
 
-products = data.get("products", [])
+    print(f"Page {page}: {len(products)} products")
+
+    if not products:
+        break
+
+    all_products.extend(products)
+
+    if len(products) < 250:
+        break
+
+    page += 1
 
 print()
-print("--- FACE TO FACE LORCANA FEED ---")
-print()
-print("Products found:", len(products))
-print()
+print("--- RESULTS ---")
+print("Total Lorcana products found:", len(all_products))
 
-for number, product in enumerate(products[:10], start=1):
+available = 0
+sold_out = 0
 
-    print(f"{number}. {product.get('title')}")
-    print("   ID:", product.get("id"))
-    print("   Handle:", product.get("handle"))
+for product in all_products:
 
     variants = product.get("variants", [])
 
-    if variants:
-        available = any(
-            variant.get("available", False)
-            for variant in variants
-        )
+    is_available = any(
+        variant.get("available", False)
+        for variant in variants
+    )
 
-        prices = [
-            variant.get("price")
-            for variant in variants
-            if variant.get("price") is not None
-        ]
+    if is_available:
+        available += 1
+    else:
+        sold_out += 1
 
-        print("   Available:", available)
-        print("   Prices:", prices[:3])
-
-    print()
+print("Currently available:", available)
+print("Currently sold out:", sold_out)
