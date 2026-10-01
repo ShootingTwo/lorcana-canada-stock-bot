@@ -25,8 +25,8 @@ titles = re.findall(
 
 # Find CAD prices
 prices = re.findall(
-    r'\\"amount\\":\\"?([0-9.]+)\\"?.{0,100}?'
-    r'\\"currencyCode\\":\\"CAD\\"',
+    r'\\"price\\":\{\\"amount\\":([0-9.]+),'
+    r'\\"currencyCode\\":\\"CAD\\"\}',
     html
 )
 
