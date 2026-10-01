@@ -17,33 +17,24 @@ if response.status_code != 200:
 
 soup = BeautifulSoup(response.text, "html.parser")
 
-print("\n--- LORCANA PRODUCT LINKS FOUND ---\n")
+print("\n--- PRODUCT LINKS FOUND ---\n")
 
-products = {}
+links_found = 0
 
 for link in soup.find_all("a", href=True):
     href = link["href"]
 
-    if "/products/" not in href:
-        continue
+    if "/products/" in href:
+        text = link.get_text(" ", strip=True)
 
-    name = link.get_text(" ", strip=True)
+        print("TEXT:", repr(text))
+        print("URL:", href)
+        print("---")
 
-    if not name:
-        continue
+        links_found += 1
 
-    if "lorcana" not in name.lower():
-        continue
+        # We only need a sample
+        if links_found >= 15:
+            break
 
-    if href.startswith("/"):
-        href = "https://hobbiesville.com" + href
-
-    products[href] = name
-
-print("Unique products found:", len(products))
-print()
-
-for number, (url, name) in enumerate(products.items(), start=1):
-    print(f"{number}. {name}")
-    print(f"   {url}")
-    print()
+print("\nProduct links sampled:", links_found)
