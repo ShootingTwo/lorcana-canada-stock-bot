@@ -3,8 +3,9 @@ import re
 import os
 import json
 import time
+import xml.etree.ElementTree as ET
 
-SEARCH_URL = "https://hobbiesville.com/search?q=lorcana&type=product"
+SITEMAP_URL = "https://www.hobbiesville.com/sitemap.xml"
 STATE_FILE = "stock_state.json"
 
 headers = {
@@ -28,9 +29,7 @@ except (FileNotFoundError, json.JSONDecodeError):
 
 # Start with everything we already know about.
 #
-# Hobbiesville's search page does not always return the exact same
-# set of products on every request. Starting with the previous state
-# prevents temporarily missing products from being forgotten and
+# This prevents temporarily missing products from being forgotten and
 # incorrectly treated as brand-new products when they reappear.
 current_state = previous_state.copy()
 
@@ -44,50 +43,117 @@ if first_run:
     print()
 
 
-# Get Hobbiesville Lorcana search results
+def get_xml_locations(xml_text):
+    """
+    Return every <loc> value from a Shopify sitemap XML document.
+    Namespace handling is intentionally flexible.
+    """
+    locations = []
+
+    try:
+        root = ET.fromstring(xml_text)
+
+        for element in root.iter():
+            if element.tag.endswith("loc") and element.text:
+                locations.append(element.text.strip())
+
+    except ET.ParseError as error:
+        print(f"ERROR parsing sitemap XML: {error}")
+
+    return locations
+
+
+# ---------------------------------------------------------
+# STEP 1: Get Hobbiesville's sitemap index
+# ---------------------------------------------------------
+
 try:
     response = requests.get(
-        SEARCH_URL,
+        SITEMAP_URL,
         headers=headers,
         timeout=30
     )
 
     if response.status_code != 200:
         print(
-            "ERROR: Could not reach Hobbiesville. "
+            "ERROR: Could not reach Hobbiesville sitemap. "
             f"HTTP {response.status_code}"
         )
         exit(1)
 
 except Exception as error:
-    print(f"ERROR reaching Hobbiesville: {error}")
+    print(f"ERROR reaching Hobbiesville sitemap: {error}")
     exit(1)
 
 
-html = response.text
+sitemap_urls = get_xml_locations(response.text)
 
-urls = re.findall(
-    r'\\"url\\":\\"(\\/products\\/[^"]+)',
-    html
-)
+product_sitemaps = [
+    url
+    for url in sitemap_urls
+    if "sitemap_products_" in url
+]
 
-urls = list(dict.fromkeys(urls))
+print(f"Hobbiesville product sitemaps found: {len(product_sitemaps)}")
 
-print(f"Lorcana products found in this search: {len(urls)}")
+
+# ---------------------------------------------------------
+# STEP 2: Read every product sitemap and collect Lorcana URLs
+# ---------------------------------------------------------
+
+product_urls = set()
+
+for sitemap_url in product_sitemaps:
+
+    try:
+        response = requests.get(
+            sitemap_url,
+            headers=headers,
+            timeout=30
+        )
+
+        if response.status_code != 200:
+            print(
+                f"Could not read product sitemap: {sitemap_url} "
+                f"(HTTP {response.status_code})"
+            )
+            continue
+
+        sitemap_product_urls = get_xml_locations(response.text)
+
+        for product_url in sitemap_product_urls:
+
+            normalized_url = product_url.lower()
+
+            if (
+                "/products/" in normalized_url
+                and "lorcana" in normalized_url
+            ):
+                product_urls.add(product_url.split("?")[0])
+
+    except Exception as error:
+        print(
+            f"ERROR reading product sitemap "
+            f"{sitemap_url}: {error}"
+        )
+
+    # Be polite to Hobbiesville.
+    time.sleep(0.2)
+
+
+product_urls = sorted(product_urls)
+
+print(f"Lorcana product URLs discovered: {len(product_urls)}")
 print(f"Products already known: {len(previous_state)}")
 print()
 
 
-for url in urls:
+# ---------------------------------------------------------
+# STEP 3: Check each discovered Lorcana product
+# ---------------------------------------------------------
 
-    url = (
-        url
-        .replace("\\u0026", "&")
-        .replace("\\/", "/")
-        .split("?")[0]
-    )
+for product_url in product_urls:
 
-    product_url = "https://www.hobbiesville.com" + url
     json_url = product_url + ".js"
 
     try:
@@ -111,6 +177,13 @@ for url in urls:
             "title",
             "Disney Lorcana Product"
         )
+
+
+        # Safety check:
+        # The URL contained "lorcana", but confirm the current product
+        # information is actually Lorcana-related as well.
+        if "lorcana" not in title.lower():
+            continue
 
 
         # Find the product image
@@ -202,6 +275,7 @@ for url in urls:
             and was_available is not True
         )
 
+
         if should_alert:
 
             if is_preorder:
@@ -286,7 +360,7 @@ for url in urls:
         print()
 
         # Avoid rapid requests to Hobbiesville.
-        time.sleep(1)
+        time.sleep(0.5)
 
 
     except Exception as error:
@@ -299,8 +373,8 @@ for url in urls:
 
 # Save the accumulated availability state.
 #
-# Products temporarily absent from Hobbiesville's search results
-# remain in this file with their last known status.
+# Products temporarily absent from discovery remain in this file
+# with their last known status.
 with open(STATE_FILE, "w") as file:
     json.dump(
         current_state,
@@ -311,6 +385,7 @@ with open(STATE_FILE, "w") as file:
 
 print()
 print("--- HOBBIESVILLE RESULTS ---")
-print(f"Products found this run: {len(urls)}")
+print(f"Product sitemaps checked: {len(product_sitemaps)}")
+print(f"Lorcana products discovered: {len(product_urls)}")
 print(f"Total products tracked: {len(current_state)}")
 print("Hobbiesville stock state updated.")
