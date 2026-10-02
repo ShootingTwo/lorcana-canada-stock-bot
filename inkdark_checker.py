@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import time
 
 import requests
@@ -11,6 +12,22 @@ STATE_FILE = "inkdark_state.json"
 SET_NAME = "into the inkdark"
 
 STORES = [
+    {
+        "name": "Hobbiesville",
+        "base_url": "https://www.hobbiesville.com",
+        "feed": "/search?q=lorcana&type=product",
+        "special_handler": "hobbiesville",
+    },
+    {
+        "name": "401 Games",
+        "base_url": "https://store.401games.ca",
+        "feed": "/collections/disney-lorcana-trading-card-game/products.json",
+    },
+    {
+        "name": "Face to Face Games",
+        "base_url": "https://facetofacegames.com",
+        "feed": "/collections/lorcana/products.json",
+    },
     {
         "name": "Kanzen",
         "base_url": "https://kanzengames.com",
@@ -187,6 +204,11 @@ def get_image(product):
                 return "https:" + src
             return src
 
+    elif isinstance(image, str):
+        if image.startswith("//"):
+            return "https:" + image
+        return image
+
     images = product.get("images", [])
 
     if images:
@@ -198,6 +220,11 @@ def get_image(product):
                 if src.startswith("//"):
                     return "https:" + src
                 return src
+
+        elif isinstance(first_image, str):
+            if first_image.startswith("//"):
+                return "https:" + first_image
+            return first_image
 
     return None
 
@@ -281,6 +308,7 @@ def send_discord_alert(
             timeout=20,
         )
         response.raise_for_status()
+
         print(f"Discord alert sent: {store_name} - {title}")
         return True
 
@@ -289,7 +317,79 @@ def send_discord_alert(
         return False
 
 
+def fetch_hobbiesville_products(store):
+    products = []
+
+    try:
+        response = requests.get(
+            store["base_url"] + store["feed"],
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/154.0 Safari/537.36"
+                )
+            },
+            timeout=30,
+        )
+        response.raise_for_status()
+
+    except requests.RequestException as error:
+        print(f"Could not fetch Hobbiesville search page: {error}")
+        return products
+
+    urls = re.findall(
+        r'\\"url\\":\\"(\\/products\\/[^"]+)',
+        response.text,
+    )
+
+    product_urls = set()
+
+    for url in urls:
+        url = (
+            url
+            .replace("\\u0026", "&")
+            .replace("\\/", "/")
+            .split("?")[0]
+        )
+
+        product_urls.add(store["base_url"] + url)
+
+    print(f"Hobbiesville product URLs found: {len(product_urls)}")
+
+    for product_url in product_urls:
+        try:
+            product_response = requests.get(
+                product_url + ".js",
+                headers={
+                    "User-Agent": (
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/154.0 Safari/537.36"
+                    )
+                },
+                timeout=30,
+            )
+            product_response.raise_for_status()
+            product = product_response.json()
+
+        except (requests.RequestException, ValueError) as error:
+            print(f"Could not fetch {product_url}: {error}")
+            continue
+
+        if not product.get("handle"):
+            product["handle"] = product_url.rstrip("/").split("/")[-1]
+
+        products.append(product)
+        time.sleep(0.2)
+
+    return products
+
+
 def fetch_store_products(store):
+    if store.get("special_handler") == "hobbiesville":
+        return fetch_hobbiesville_products(store)
+
     products = []
     page = 1
 
@@ -369,13 +469,14 @@ def main():
                 continue
 
             state_key = f"{store['name']}::{product_id}"
+
             product_url = (
                 store["base_url"].rstrip("/")
                 + "/products/"
                 + handle
             )
 
-            available = product_is_available(product)               
+            available = product_is_available(product)
             price = get_display_price(product)
             image_url = get_image(product)
 
