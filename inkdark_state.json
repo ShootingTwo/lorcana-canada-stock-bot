@@ -1,1 +1,18 @@
-{}
+{
+  "Kanzen::9374302011607": {
+    "available": false,
+    "price": 59.95,
+    "product_id": "9374302011607",
+    "store": "Kanzen",
+    "title": "Disney Lorcana: Into The InkDark Illumineer's Trove (Pre-Order)",
+    "url": "https://kanzengames.com/products/disney-lorcana-into-the-inkdark-illumineers-trove-pre-order"
+  },
+  "Kanzen::9374302208215": {
+    "available": false,
+    "price": 209.95,
+    "product_id": "9374302208215",
+    "store": "Kanzen",
+    "title": "Disney Lorcana: Into The InkDark Booster Box (Pre-Order) Limit 4 Per Customer",
+    "url": "https://kanzengames.com/products/disney-lorcana-into-the-inkdark-booster-box-pre-order"
+  }
+}
