@@ -376,6 +376,10 @@ def main():
             )
 
             available = product_is_available(product)
+            # TEMPORARY TEST: Pretend the Kanzen Trove is available
+            if store["name"] == "Kanzen" and "illumineer's trove" in normalize_text(title):
+                available = True
+                
             price = get_display_price(product)
             image_url = get_image(product)
 
