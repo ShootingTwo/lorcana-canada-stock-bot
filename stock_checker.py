@@ -1,5 +1,4 @@
 import requests
-import re
 import os
 import json
 import time
@@ -243,12 +242,18 @@ for product_url in product_urls:
 
         # Determine preorder status from the current product title.
         #
+        # Hobbiesville uses several different spellings:
+        # "Pre-Order", "Preorder", and "Pre Order".
+        #
         # We intentionally do NOT use the URL because Hobbiesville
-        # may retain "-pre-order" in an old product URL even after
+        # may retain preorder wording in an old product URL even after
         # the product has become normal in-stock inventory.
+        title_lower = title.lower()
+
         is_preorder = (
-            "pre-order" in title.lower()
-            or "preorder" in title.lower()
+            "pre-order" in title_lower
+            or "preorder" in title_lower
+            or "pre order" in title_lower
         )
 
 
