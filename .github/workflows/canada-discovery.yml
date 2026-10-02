@@ -1,8 +1,6 @@
 name: Canada Lorcana Discovery
 
 on:
-  schedule:
-    - cron: "12,42 * * * *"
   workflow_dispatch:
 
 permissions:
