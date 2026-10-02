@@ -1,7 +1,7 @@
 import json
 import os
-import re
 import time
+import xml.etree.ElementTree as ET
 
 import requests
 
@@ -11,11 +11,19 @@ STATE_FILE = "inkdark_state.json"
 
 SET_NAME = "into the inkdark"
 
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/154.0 Safari/537.36"
+    )
+}
+
 STORES = [
     {
         "name": "Hobbiesville",
         "base_url": "https://www.hobbiesville.com",
-        "feed": "/search?q=lorcana&type=product",
+        "feed": "/sitemap.xml",
         "special_handler": "hobbiesville",
     },
     {
@@ -317,57 +325,105 @@ def send_discord_alert(
         return False
 
 
+def get_xml_locations(xml_text):
+    """
+    Return every <loc> value from a Shopify sitemap XML document.
+    """
+    locations = []
+
+    try:
+        root = ET.fromstring(xml_text)
+
+        for element in root.iter():
+            if element.tag.endswith("loc") and element.text:
+                locations.append(element.text.strip())
+
+    except ET.ParseError as error:
+        print(f"Could not parse Hobbiesville sitemap XML: {error}")
+
+    return locations
+
+
 def fetch_hobbiesville_products(store):
+    """
+    Discover Hobbiesville Lorcana products through its Shopify
+    product sitemaps instead of the site's search results.
+
+    Hobbiesville search can omit valid product pages, so the
+    sitemap provides more reliable discovery.
+    """
     products = []
+
+    sitemap_index_url = store["base_url"] + store["feed"]
 
     try:
         response = requests.get(
-            store["base_url"] + store["feed"],
-            headers={
-                "User-Agent": (
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/154.0 Safari/537.36"
-                )
-            },
+            sitemap_index_url,
+            headers=HEADERS,
             timeout=30,
         )
         response.raise_for_status()
 
     except requests.RequestException as error:
-        print(f"Could not fetch Hobbiesville search page: {error}")
+        print(f"Could not fetch Hobbiesville sitemap index: {error}")
         return products
 
-    urls = re.findall(
-        r'\\"url\\":\\"(\\/products\\/[^"]+)',
-        response.text,
+    sitemap_urls = get_xml_locations(response.text)
+
+    product_sitemaps = [
+        url
+        for url in sitemap_urls
+        if "sitemap_products_" in url
+    ]
+
+    print(
+        f"Hobbiesville product sitemaps found: "
+        f"{len(product_sitemaps)}"
     )
 
     product_urls = set()
 
-    for url in urls:
-        url = (
-            url
-            .replace("\\u0026", "&")
-            .replace("\\/", "/")
-            .split("?")[0]
-        )
+    for sitemap_url in product_sitemaps:
+        try:
+            sitemap_response = requests.get(
+                sitemap_url,
+                headers=HEADERS,
+                timeout=30,
+            )
+            sitemap_response.raise_for_status()
 
-        product_urls.add(store["base_url"] + url)
+        except requests.RequestException as error:
+            print(
+                f"Could not fetch Hobbiesville product sitemap "
+                f"{sitemap_url}: {error}"
+            )
+            continue
 
-    print(f"Hobbiesville product URLs found: {len(product_urls)}")
+        locations = get_xml_locations(sitemap_response.text)
 
-    for product_url in product_urls:
+        for product_url in locations:
+            normalized_url = product_url.lower()
+
+            if (
+                "/products/" in normalized_url
+                and "lorcana" in normalized_url
+            ):
+                product_urls.add(
+                    product_url.split("?")[0]
+                )
+
+        time.sleep(0.2)
+
+    print(
+        f"Hobbiesville Lorcana product URLs found: "
+        f"{len(product_urls)}"
+    )
+
+    for product_url in sorted(product_urls):
         try:
             product_response = requests.get(
                 product_url + ".js",
-                headers={
-                    "User-Agent": (
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/154.0 Safari/537.36"
-                    )
-                },
+                headers=HEADERS,
                 timeout=30,
             )
             product_response.raise_for_status()
@@ -377,10 +433,20 @@ def fetch_hobbiesville_products(store):
             print(f"Could not fetch {product_url}: {error}")
             continue
 
+        title = product.get("title", "")
+
+        # Extra safeguard so a misleading URL does not result
+        # in an unrelated product entering the monitor.
+        if "lorcana" not in normalize_text(title):
+            continue
+
         if not product.get("handle"):
-            product["handle"] = product_url.rstrip("/").split("/")[-1]
+            product["handle"] = (
+                product_url.rstrip("/").split("/")[-1]
+            )
 
         products.append(product)
+
         time.sleep(0.2)
 
     return products
@@ -403,13 +469,7 @@ def fetch_store_products(store):
                     "limit": 250,
                     "page": page,
                 },
-                headers={
-                    "User-Agent": (
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/154.0 Safari/537.36"
-                    )
-                },
+                headers=HEADERS,
                 timeout=30,
             )
 
@@ -418,7 +478,8 @@ def fetch_store_products(store):
 
         except (requests.RequestException, ValueError) as error:
             print(
-                f"Could not fetch {store['name']} page {page}: {error}"
+                f"Could not fetch {store['name']} "
+                f"page {page}: {error}"
             )
             break
 
