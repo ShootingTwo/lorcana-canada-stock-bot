@@ -3,7 +3,8 @@ import os
 import re
 import time
 import xml.etree.ElementTree as ET
-from urllib.parse import urljoin, urlparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import urlparse
 
 import requests
 
@@ -20,11 +21,11 @@ HEADERS = {
     )
 }
 
+# Number of sitemap files we may fetch simultaneously.
+# Kept deliberately moderate so we do not hammer retailers.
+MAX_SITEMAP_WORKERS = 8
 
-# These are starting points only.
-# When we discover additional Canadian retailer domains,
-# they can be added automatically to the state and checked
-# on future runs.
+
 SEED_STORES = [
     {
         "name": "Hobbiesville",
@@ -219,106 +220,143 @@ def get_xml_locations(xml_text):
     return locations
 
 
+def fetch_url(url, timeout=30):
+    try:
+        response = requests.get(
+            url,
+            headers=HEADERS,
+            timeout=timeout,
+        )
+
+        response.raise_for_status()
+
+        return response.text
+
+    except requests.RequestException:
+        return None
+
+
+def fetch_product_sitemap(sitemap_url):
+    xml_text = fetch_url(
+        sitemap_url,
+        timeout=30,
+    )
+
+    if not xml_text:
+        return []
+
+    locations = get_xml_locations(
+        xml_text
+    )
+
+    return [
+        location
+        for location in locations
+        if "/products/" in location.lower()
+    ]
+
+
 def get_sitemap_urls(base_url):
     sitemap_url = (
         base_url.rstrip("/")
         + "/sitemap.xml"
     )
 
-    try:
-        response = requests.get(
-            sitemap_url,
-            headers=HEADERS,
-            timeout=30,
-        )
+    xml_text = fetch_url(
+        sitemap_url,
+        timeout=30,
+    )
 
-        response.raise_for_status()
-
-    except requests.RequestException as error:
-        print(
-            f"Sitemap unavailable: {error}"
-        )
+    if not xml_text:
+        print("Sitemap unavailable.")
         return []
 
     locations = get_xml_locations(
-        response.text
+        xml_text
     )
 
     if not locations:
         return []
 
     sitemap_urls = []
-
-    product_urls = []
+    direct_product_urls = []
 
     for location in locations:
         lower = location.lower()
 
-        if (
-            "sitemap" in lower
-            and location.endswith(
-                (".xml", ".xml.gz")
+        if "/products/" in lower:
+            direct_product_urls.append(
+                location
             )
-        ):
-            sitemap_urls.append(location)
-
-        elif "/products/" in lower:
-            product_urls.append(location)
-
-    # Shopify sitemap URLs often contain query
-    # parameters after .xml, so detect those too.
-    for location in locations:
-        lower = location.lower()
 
         if (
             "sitemap_products_" in lower
-            and location not in sitemap_urls
+            or (
+                "sitemap" in lower
+                and "product" in lower
+            )
         ):
-            sitemap_urls.append(location)
+            sitemap_urls.append(
+                location
+            )
+
+    sitemap_urls = list(
+        dict.fromkeys(
+            sitemap_urls
+        )
+    )
+
+    direct_product_urls = list(
+        dict.fromkeys(
+            direct_product_urls
+        )
+    )
 
     if not sitemap_urls:
-        return product_urls
+        return direct_product_urls
 
     print(
-        f"Product sitemap candidates: "
+        f"Product sitemap files: "
         f"{len(sitemap_urls)}"
     )
 
-    for child_url in sitemap_urls:
+    product_urls = list(
+        direct_product_urls
+    )
 
-        # We are primarily interested in product
-        # sitemap files.
-        child_lower = child_url.lower()
+    # Fetch independent product sitemap files
+    # concurrently rather than sequentially.
+    with ThreadPoolExecutor(
+        max_workers=MAX_SITEMAP_WORKERS
+    ) as executor:
 
-        if (
-            "product" not in child_lower
-            and "sitemap_products_" not in child_lower
+        futures = {
+            executor.submit(
+                fetch_product_sitemap,
+                sitemap,
+            ): sitemap
+            for sitemap in sitemap_urls
+        }
+
+        for future in as_completed(
+            futures
         ):
-            continue
+            try:
+                urls = future.result()
+                product_urls.extend(urls)
+            except Exception as error:
+                sitemap = futures[future]
 
-        try:
-            response = requests.get(
-                child_url,
-                headers=HEADERS,
-                timeout=30,
-            )
+                print(
+                    "Sitemap fetch failed: "
+                    f"{sitemap} - {error}"
+                )
 
-            response.raise_for_status()
-
-        except requests.RequestException:
-            continue
-
-        child_locations = get_xml_locations(
-            response.text
+    return list(
+        dict.fromkeys(
+            product_urls
         )
-
-        for location in child_locations:
-            if "/products/" in location.lower():
-                product_urls.append(location)
-
-        time.sleep(0.1)
-
-    return list(dict.fromkeys(product_urls))
+    )
 
 
 def find_target_urls(store):
@@ -328,33 +366,55 @@ def find_target_urls(store):
     print()
     print(f"Checking {name}...")
 
-    urls = get_sitemap_urls(base_url)
+    start_time = time.time()
+
+    urls = get_sitemap_urls(
+        base_url
+    )
+
+    elapsed = (
+        time.time()
+        - start_time
+    )
 
     print(
         f"Product URLs discovered: "
         f"{len(urls)}"
     )
 
+    print(
+        f"Sitemap scan time: "
+        f"{elapsed:.1f} seconds"
+    )
+
     matches = []
 
     for url in urls:
-        cleaned_url = clean_product_url(url)
+        cleaned_url = clean_product_url(
+            url
+        )
 
         if not cleaned_url:
             continue
 
-        # First use the URL itself. This is very
-        # fast and catches most Shopify listings.
         url_text = (
             cleaned_url
             .replace("-", " ")
             .replace("_", " ")
         )
 
-        if is_target_text(url_text):
-            matches.append(cleaned_url)
+        if is_target_text(
+            url_text
+        ):
+            matches.append(
+                cleaned_url
+            )
 
-    matches = list(dict.fromkeys(matches))
+    matches = list(
+        dict.fromkeys(
+            matches
+        )
+    )
 
     print(
         f"Target URLs found: "
@@ -373,7 +433,6 @@ def get_product_details(url):
         "image": None,
     }
 
-    # Shopify product JSON endpoint.
     js_url = url + ".js"
 
     try:
@@ -454,7 +513,10 @@ def get_product_details(url):
 
                 if isinstance(image, str):
                     if image.startswith("//"):
-                        image = "https:" + image
+                        image = (
+                            "https:"
+                            + image
+                        )
 
                     details["image"] = image
 
@@ -466,7 +528,6 @@ def get_product_details(url):
     ):
         pass
 
-    # Generic page fallback for non-Shopify stores.
     try:
         response = requests.get(
             url,
@@ -484,7 +545,10 @@ def get_product_details(url):
     title_match = re.search(
         r"<title[^>]*>(.*?)</title>",
         html,
-        flags=re.IGNORECASE | re.DOTALL,
+        flags=(
+            re.IGNORECASE
+            | re.DOTALL
+        ),
     )
 
     if title_match:
@@ -524,7 +588,9 @@ def send_discord_alert(
     url = details["url"]
 
     price = details.get("price")
-    available = details.get("available")
+    available = details.get(
+        "available"
+    )
 
     if price is None:
         price_text = "Unknown"
@@ -534,11 +600,17 @@ def send_discord_alert(
         )
 
     if available is True:
-        availability_text = "Available"
+        availability_text = (
+            "Available"
+        )
     elif available is False:
-        availability_text = "Unavailable"
+        availability_text = (
+            "Unavailable"
+        )
     else:
-        availability_text = "Unknown"
+        availability_text = (
+            "Unknown"
+        )
 
     embed = {
         "title": title,
@@ -572,7 +644,9 @@ def send_discord_alert(
         ],
     }
 
-    image = details.get("image")
+    image = details.get(
+        "image"
+    )
 
     if image:
         embed["thumbnail"] = {
@@ -598,33 +672,43 @@ def send_discord_alert(
 
         print(
             f"Discord alert sent: "
-            f"{store['name']} - {title}"
+            f"{store['name']} - "
+            f"{title}"
         )
 
         return True
 
     except requests.RequestException as error:
         print(
-            f"Discord alert failed: {error}"
+            f"Discord alert failed: "
+            f"{error}"
         )
 
         return False
 
 
 def main():
+    run_start = time.time()
+
     previous_state = load_state()
-    current_state = previous_state.copy()
+    current_state = (
+        previous_state.copy()
+    )
 
     total_urls = 0
     total_targets = 0
     alerts_sent = 0
 
     for store in SEED_STORES:
-        target_urls = find_target_urls(
-            store
+        target_urls = (
+            find_target_urls(
+                store
+            )
         )
 
-        total_urls += len(target_urls)
+        total_urls += len(
+            target_urls
+        )
 
         for url in target_urls:
             total_targets += 1
@@ -635,19 +719,22 @@ def main():
                 + url
             )
 
-            if state_key in previous_state:
+            if (
+                state_key
+                in previous_state
+            ):
                 continue
 
-            details = get_product_details(
-                url
+            details = (
+                get_product_details(
+                    url
+                )
             )
 
-            # Verify using both title and URL before
-            # sending an alert.
             verification_text = (
                 details.get(
                     "title",
-                    ""
+                    "",
                 )
                 + " "
                 + url.replace(
@@ -664,7 +751,9 @@ def main():
             print()
             print("New discovery:")
             print(
-                details.get("title")
+                details.get(
+                    "title"
+                )
                 or url
             )
             print(url)
@@ -680,11 +769,13 @@ def main():
                 current_state[
                     state_key
                 ] = {
-                    "store": store[
-                        "name"
-                    ],
-                    "domain": get_domain(
-                        url
+                    "store": (
+                        store["name"]
+                    ),
+                    "domain": (
+                        get_domain(
+                            url
+                        )
                     ),
                     "title": (
                         details.get(
@@ -699,7 +790,14 @@ def main():
 
             time.sleep(0.5)
 
-    save_state(current_state)
+    save_state(
+        current_state
+    )
+
+    total_runtime = (
+        time.time()
+        - run_start
+    )
 
     print()
     print(
@@ -724,6 +822,10 @@ def main():
     print(
         f"Total discoveries tracked: "
         f"{len(current_state)}"
+    )
+    print(
+        f"Total runtime: "
+        f"{total_runtime:.1f} seconds"
     )
 
 
