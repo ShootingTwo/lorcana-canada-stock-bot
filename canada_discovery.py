@@ -4,7 +4,7 @@ import re
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import requests
 
@@ -12,6 +12,7 @@ import requests
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 
 STATE_FILE = "canada_discovery_state.json"
+RETAILER_STATE_FILE = "canada_discovered_retailers.json"
 
 HEADERS = {
     "User-Agent": (
@@ -97,6 +98,12 @@ SEED_STORES = [
     },
 ]
 
+DISCOVERY_SOURCES = [
+    {
+        "name": "Ravensburger Store Locator",
+        "url": "https://www.ravensburger.ca/en-CA/service/store-locator",
+    },
+]
 
 SET_TERMS = [
     "into the inkdark",
@@ -146,6 +153,40 @@ def save_state(state):
             sort_keys=True,
         )
 
+def load_discovered_retailers():
+    try:
+        with open(
+            RETAILER_STATE_FILE,
+            "r",
+            encoding="utf-8",
+        ) as file:
+            data = json.load(file)
+
+            if isinstance(data, dict):
+                return data
+
+    except (
+        FileNotFoundError,
+        json.JSONDecodeError,
+        OSError,
+    ):
+        pass
+
+    return {}
+
+
+def save_discovered_retailers(retailers):
+    with open(
+        RETAILER_STATE_FILE,
+        "w",
+        encoding="utf-8",
+    ) as file:
+        json.dump(
+            retailers,
+            file,
+            indent=2,
+            sort_keys=True,
+        )
 
 def normalize_text(text):
     text = str(text or "").lower()
@@ -201,6 +242,172 @@ def get_domain(url):
     except Exception:
         return ""
 
+def get_seed_domains():
+    domains = set()
+
+    for store in SEED_STORES:
+        domain = get_domain(
+            store["base_url"]
+        )
+
+        if domain:
+            domains.add(domain)
+
+            # Treat www and non-www versions
+            # as the same retailer.
+            if domain.startswith("www."):
+                domains.add(
+                    domain[4:]
+                )
+            else:
+                domains.add(
+                    "www." + domain
+                )
+
+    return domains
+
+
+def normalize_domain(domain):
+    domain = (
+        str(domain or "")
+        .lower()
+        .strip()
+    )
+
+    if domain.startswith("www."):
+        domain = domain[4:]
+
+    return domain
+
+def discover_candidate_retailers():
+    seed_domains = {
+        normalize_domain(domain)
+        for domain in get_seed_domains()
+    }
+
+    candidates = {}
+
+    for source in DISCOVERY_SOURCES:
+        print()
+        print(
+            f"Discovery source: "
+            f"{source['name']}"
+        )
+
+        try:
+            response = requests.get(
+                source["url"],
+                headers=HEADERS,
+                timeout=30,
+            )
+
+            response.raise_for_status()
+
+        except requests.RequestException as error:
+            print(
+                f"Discovery source failed: "
+                f"{error}"
+            )
+            continue
+
+        html = response.text
+
+        links = re.findall(
+            r'href=["\']([^"\']+)["\']',
+            html,
+            flags=re.IGNORECASE,
+        )
+
+        source_domain = normalize_domain(
+            get_domain(
+                source["url"]
+            )
+        )
+
+        source_candidates = 0
+
+        for link in links:
+            absolute_url = urljoin(
+                source["url"],
+                link,
+            )
+
+            parsed = urlparse(
+                absolute_url
+            )
+
+            if parsed.scheme not in (
+                "http",
+                "https",
+            ):
+                continue
+
+            domain = normalize_domain(
+                parsed.netloc
+            )
+
+            if not domain:
+                continue
+
+            # Ignore links that remain on the
+            # discovery source itself.
+            if domain == source_domain:
+                continue
+
+            # Ignore the 17 retailers we already
+            # explicitly monitor.
+            if domain in seed_domains:
+                continue
+
+            # Ignore common non-retailer services.
+            excluded_domains = (
+                "facebook.com",
+                "instagram.com",
+                "youtube.com",
+                "linkedin.com",
+                "twitter.com",
+                "x.com",
+                "tiktok.com",
+                "pinterest.com",
+                "google.com",
+                "google.ca",
+                "apple.com",
+            )
+
+            if any(
+                domain == excluded
+                or domain.endswith(
+                    "." + excluded
+                )
+                for excluded
+                in excluded_domains
+            ):
+                continue
+
+            if domain not in candidates:
+                candidates[domain] = {
+                    "domain": domain,
+                    "base_url": (
+                        f"{parsed.scheme}://"
+                        f"{parsed.netloc}"
+                    ),
+                    "source": source["name"],
+                }
+
+                source_candidates += 1
+
+        print(
+            f"New candidate domains found: "
+            f"{source_candidates}"
+        )
+
+    print()
+    print(
+        f"Unique candidate retailer domains: "
+        f"{len(candidates)}"
+    )
+
+    return candidates
 
 def get_xml_locations(xml_text):
     try:
@@ -689,6 +896,26 @@ def send_discord_alert(
 
 def main():
     run_start = time.time()
+    
+    candidate_retailers = discover_candidate_retailers()
+
+    print()
+    print(
+        "--- RETAILER DISCOVERY TEST ---"
+    )
+
+    for domain, retailer in sorted(
+        candidate_retailers.items()
+    ):
+        print(
+            f"{domain} | "
+            f"{retailer['source']}"
+        )
+
+    print(
+        f"Candidate domains found: "
+        f"{len(candidate_retailers)}"
+    )
 
     previous_state = load_state()
     current_state = (
