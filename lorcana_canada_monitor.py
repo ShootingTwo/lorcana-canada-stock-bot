@@ -23,19 +23,33 @@ SETS = {
             "into the inkdark",
             "inkdark",
         ],
-        "allow_collector_booster_pack": True,
+        "product_types": {
+            "booster_box": True,
+            "trove": True,
+            "collector_booster_pack": True,
+        },
     },
+
     "Hyperia City": {
         "aliases": [
             "hyperia city",
         ],
-        "allow_collector_booster_pack": False,
+        "product_types": {
+            "booster_box": True,
+            "trove": True,
+            "collector_booster_pack": False,
+        },
     },
+
     "Cosmic Quest": {
         "aliases": [
             "cosmic quest",
         ],
-        "allow_collector_booster_pack": False,
+        "product_types": {
+            "booster_box": True,
+            "trove": True,
+            "collector_booster_pack": False,
+        },
     },
 }
 
