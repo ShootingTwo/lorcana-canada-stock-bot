@@ -28,12 +28,12 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run Into the Inkdark monitor
+      - name: Run Lorcana Canada monitor
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python lorcana_canada_monitor.py
 
-      - name: Save Into the Inkdark state
+      - name: Save Lorcana Canada state
         run: |
           git config user.name "Lorcana Stock Bot"
           git config user.email "actions@github.com"
@@ -52,6 +52,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No Into the Inkdark state changes to save."
           else
-            git commit -m "Update Into the Inkdark state"
+            git commit -m "Update Lorcana Canada state"
             git push origin main
           fi
