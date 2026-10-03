@@ -7,9 +7,38 @@ import requests
 
 
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
+
+# Keep using the existing state file for now so that products
+# already tracked by the old Into the Inkdark monitor are preserved.
 STATE_FILE = "inkdark_state.json"
 
-SET_NAME = "into the inkdark"
+
+# ------------------------------------------------------------
+# SETS AND PRODUCT TYPES TO MONITOR
+# ------------------------------------------------------------
+
+SETS = {
+    "Into the Inkdark": {
+        "aliases": [
+            "into the inkdark",
+            "inkdark",
+        ],
+        "allow_collector_booster_pack": True,
+    },
+    "Hyperia City": {
+        "aliases": [
+            "hyperia city",
+        ],
+        "allow_collector_booster_pack": False,
+    },
+    "Cosmic Quest": {
+        "aliases": [
+            "cosmic quest",
+        ],
+        "allow_collector_booster_pack": False,
+    },
+}
+
 
 HEADERS = {
     "User-Agent": (
@@ -19,7 +48,16 @@ HEADERS = {
     )
 }
 
+
+# ------------------------------------------------------------
+# RETAILERS
+# ------------------------------------------------------------
+
 STORES = [
+    # --------------------------------------------------------
+    # EXISTING RETAILERS
+    # --------------------------------------------------------
+
     {
         "name": "Hobbiesville",
         "base_url": "https://www.hobbiesville.com",
@@ -29,7 +67,11 @@ STORES = [
     {
         "name": "401 Games",
         "base_url": "https://store.401games.ca",
-        "feed": "/collections/disney-lorcana-trading-card-game/products.json",
+        "feed": (
+            "/collections/"
+            "disney-lorcana-trading-card-game/"
+            "products.json"
+        ),
     },
     {
         "name": "Face to Face Games",
@@ -106,8 +148,138 @@ STORES = [
         "base_url": "https://themythicstore.com",
         "feed": "/collections/disney-lorcana/products.json",
     },
+
+    # --------------------------------------------------------
+    # NEW RETAILERS
+    # --------------------------------------------------------
+
+    {
+        "name": "Northern War Table",
+        "base_url": "https://northernwartable.com",
+        "feed": (
+            "/collections/"
+            "disney-lorcana-sealed/"
+            "products.json"
+        ),
+    },
+    {
+        "name": "PvP",
+        "base_url": "https://pvpshoppe.com",
+        "feed": (
+            "/collections/"
+            "disney-lorcana-sealed-product/"
+            "products.json"
+        ),
+    },
+    {
+        "name": "The Upper Hand",
+        "base_url": "https://www.theupperhand.ca",
+        "feed": (
+            "/collections/"
+            "disney-lorcana-trading-card-game-1/"
+            "products.json"
+        ),
+    },
+    {
+        "name": "Game 3",
+        "base_url": "https://game3.ca",
+        "feed": (
+            "/collections/"
+            "disney-lorcana-sealed/"
+            "products.json"
+        ),
+    },
+    {
+        "name": "Anime Alley",
+        "base_url": "https://animealley.ca",
+        "special_handler": "shopify_search",
+    },
+    {
+        "name": "New Realm Games",
+        "base_url": "https://newrealmgames.com",
+        "feed": (
+            "/collections/"
+            "disney-lorcana-sealed-product/"
+            "products.json"
+        ),
+    },
+    {
+        "name": "Boreal Gaming & Cards",
+        "base_url": "https://borealgaming.com",
+        "special_handler": "shopify_search",
+    },
+    {
+        "name": "Derpy Cards",
+        "base_url": "https://derpycards.ca",
+        "feed": (
+            "/collections/"
+            "disney-lorcana/"
+            "products.json"
+        ),
+    },
+    {
+        "name": "WoodForSheep",
+        "base_url": "https://www.woodforsheep.ca",
+        "special_handler": "shopify_search",
+    },
+    {
+        "name": "Dark Fox TCG",
+        "base_url": "https://www.darkfoxtcg.com",
+        "feed": "/collections/lorcana-1/products.json",
+    },
+    {
+        "name": "TCG Zone Canada",
+        "base_url": "https://tcgzonecanada.com",
+        "special_handler": "shopify_search",
+    },
+    {
+        "name": "Cardboard Memories",
+        "base_url": "https://www.cardboardmemories.ca",
+        "feed": "/collections/lorcana/products.json",
+    },
+    {
+        "name": "Cardboard Hero Games and Collectibles",
+        "base_url": "https://cardboardhero.com",
+        "special_handler": "shopify_search",
+    },
+    {
+        "name": "Waypoint Games",
+        "base_url": "https://waypointgames.ca",
+        "feed": "/collections/lorcana-sealed/products.json",
+    },
+    {
+        "name": "Mystic Dragon",
+        "base_url": "https://mystic-dragon.ca",
+        "feed": (
+            "/collections/"
+            "disney-lorcana/"
+            "products.json"
+        ),
+    },
+    {
+        "name": "Untouchables",
+        "base_url": "https://untouchables.ca",
+        "feed": (
+            "/collections/"
+            "lorcana-sealed-product/"
+            "products.json"
+        ),
+    },
+    {
+        "name": "Tistaminis",
+        "base_url": "https://tistaminis.com",
+        "feed": (
+            "/collections/"
+            "disney-lorcana/"
+            "products.json"
+        ),
+    },
 ]
 
+
+# ------------------------------------------------------------
+# STATE
+# ------------------------------------------------------------
 
 def load_state():
     if not os.path.exists(STATE_FILE):
@@ -117,14 +289,24 @@ def load_state():
         with open(STATE_FILE, "r", encoding="utf-8") as file:
             data = json.load(file)
             return data if isinstance(data, dict) else {}
+
     except (json.JSONDecodeError, OSError):
         return {}
 
 
 def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as file:
-        json.dump(state, file, indent=2, sort_keys=True)
+        json.dump(
+            state,
+            file,
+            indent=2,
+            sort_keys=True,
+        )
 
+
+# ------------------------------------------------------------
+# TEXT / PRODUCT MATCHING
+# ------------------------------------------------------------
 
 def normalize_text(text):
     return (
@@ -136,32 +318,101 @@ def normalize_text(text):
     )
 
 
-def is_target_product(title):
+def identify_set(title):
+    """
+    Return the monitored Lorcana set represented by the
+    product title, or None if the title is not one of the
+    sets we are monitoring.
+    """
+
     title_lower = normalize_text(title)
 
-    if SET_NAME not in title_lower:
-        return False
+    for set_name, config in SETS.items():
+        aliases = config.get("aliases", [])
 
-    booster_box_terms = [
-        "booster box",
-        "booster display",
+        if any(
+            alias in title_lower
+            for alias in aliases
+        ):
+            return set_name
+
+    return None
+
+
+def is_collector_booster_pack(title):
+    """
+    Into the Inkdark collector booster packs are monitored,
+    while ordinary individual booster packs are not.
+    """
+
+    title_lower = normalize_text(title)
+
+    collector_terms = [
+        "collector",
+        "collector's",
+        "collectors",
     ]
 
-    trove_terms = [
-        "illumineer's trove",
-        "illumineers trove",
-        "illumineer trove",
-    ]
-
-    return (
-        any(term in title_lower for term in booster_box_terms)
-        or any(term in title_lower for term in trove_terms)
+    has_collector = any(
+        term in title_lower
+        for term in collector_terms
     )
 
+    has_booster_pack = (
+        "booster pack" in title_lower
+        or "booster packs" in title_lower
+    )
+
+    return has_collector and has_booster_pack
+
+
+def is_target_product(title):
+    set_name = identify_set(title)
+
+    if not set_name:
+        return False
+
+    title_lower = normalize_text(title)
+
+    # All monitored sets include booster boxes/displays.
+    if (
+        "booster box" in title_lower
+        or "booster display" in title_lower
+    ):
+        return True
+
+    # Match any Trove wording, including:
+    # Illumineer's Trove
+    # Illumineers Trove
+    # Collector's Trove, etc.
+    if "trove" in title_lower:
+        return True
+
+    # Into the Inkdark additionally includes individual
+    # Collector Booster Packs.
+    if (
+        SETS[set_name].get(
+            "allow_collector_booster_pack",
+            False,
+        )
+        and is_collector_booster_pack(title)
+    ):
+        return True
+
+    return False
+
+
+# ------------------------------------------------------------
+# PRODUCT INFORMATION
+# ------------------------------------------------------------
 
 def product_is_available(product):
     variants = product.get("variants", [])
-    return any(bool(variant.get("available")) for variant in variants)
+
+    return any(
+        bool(variant.get("available"))
+        for variant in variants
+    )
 
 
 def get_lowest_available_price(product):
@@ -172,7 +423,10 @@ def get_lowest_available_price(product):
             continue
 
         try:
-            prices.append(float(variant.get("price")))
+            prices.append(
+                float(variant.get("price"))
+            )
+
         except (TypeError, ValueError):
             pass
 
@@ -183,7 +437,9 @@ def get_lowest_available_price(product):
 
 
 def get_display_price(product):
-    available_price = get_lowest_available_price(product)
+    available_price = (
+        get_lowest_available_price(product)
+    )
 
     if available_price is not None:
         return available_price
@@ -192,7 +448,10 @@ def get_display_price(product):
 
     for variant in product.get("variants", []):
         try:
-            prices.append(float(variant.get("price")))
+            prices.append(
+                float(variant.get("price"))
+            )
+
         except (TypeError, ValueError):
             pass
 
@@ -207,14 +466,17 @@ def get_image(product):
 
     if isinstance(image, dict):
         src = image.get("src")
+
         if src:
             if src.startswith("//"):
                 return "https:" + src
+
             return src
 
     elif isinstance(image, str):
         if image.startswith("//"):
             return "https:" + image
+
         return image
 
     images = product.get("images", [])
@@ -224,14 +486,17 @@ def get_image(product):
 
         if isinstance(first_image, dict):
             src = first_image.get("src")
+
             if src:
                 if src.startswith("//"):
                     return "https:" + src
+
                 return src
 
         elif isinstance(first_image, str):
             if first_image.startswith("//"):
                 return "https:" + first_image
+
             return first_image
 
     return None
@@ -247,8 +512,13 @@ def is_preorder(title):
     )
 
 
+# ------------------------------------------------------------
+# DISCORD
+# ------------------------------------------------------------
+
 def send_discord_alert(
     store_name,
+    set_name,
     title,
     product_url,
     image_url,
@@ -257,25 +527,51 @@ def send_discord_alert(
     event_type,
 ):
     if not DISCORD_WEBHOOK_URL:
-        print("DISCORD_WEBHOOK_URL is not configured.")
+        print(
+            "DISCORD_WEBHOOK_URL is not configured."
+        )
         return False
 
+    set_heading = set_name.upper()
+
     if event_type == "new":
-        heading = "🆕 NEW INTO THE INKDARK LISTING"
-        description = "A new qualifying product listing has appeared."
+        heading = (
+            f"🆕 NEW {set_heading} LISTING"
+        )
+
+        description = (
+            "A new qualifying product listing "
+            "has appeared."
+        )
 
     elif available and is_preorder(title):
-        heading = "🔵 INTO THE INKDARK PREORDER AVAILABLE"
-        description = "This product is now available to preorder."
+        heading = (
+            f"🔵 {set_heading} PREORDER AVAILABLE"
+        )
+
+        description = (
+            "This product is now available "
+            "to preorder."
+        )
 
     else:
-        heading = "🟢 INTO THE INKDARK AVAILABLE"
-        description = "This product is now available to order."
+        heading = (
+            f"🟢 {set_heading} AVAILABLE"
+        )
+
+        description = (
+            "This product is now available to order."
+        )
 
     fields = [
         {
             "name": "Store",
             "value": store_name,
+            "inline": True,
+        },
+        {
+            "name": "Set",
+            "value": set_name,
             "inline": True,
         },
         {
@@ -306,7 +602,9 @@ def send_discord_alert(
     }
 
     if image_url:
-        embed["thumbnail"] = {"url": image_url}
+        embed["thumbnail"] = {
+            "url": image_url
+        }
 
     payload = {
         "content": heading,
@@ -319,18 +617,27 @@ def send_discord_alert(
             json=payload,
             timeout=20,
         )
+
         response.raise_for_status()
 
         print(
             f"Discord alert sent: "
             f"{store_name} - {title}"
         )
+
         return True
 
     except requests.RequestException as error:
-        print(f"Discord alert failed: {error}")
+        print(
+            f"Discord alert failed: {error}"
+        )
+
         return False
 
+
+# ------------------------------------------------------------
+# HOBBIESVILLE SITEMAP DISCOVERY
+# ------------------------------------------------------------
 
 def get_xml_locations(xml_text):
     locations = []
@@ -339,13 +646,18 @@ def get_xml_locations(xml_text):
         root = ET.fromstring(xml_text)
 
         for element in root.iter():
-            if element.tag.endswith("loc") and element.text:
-                locations.append(element.text.strip())
+            if (
+                element.tag.endswith("loc")
+                and element.text
+            ):
+                locations.append(
+                    element.text.strip()
+                )
 
     except ET.ParseError as error:
         print(
-            f"Could not parse Hobbiesville "
-            f"sitemap XML: {error}"
+            f"Could not parse sitemap XML: "
+            f"{error}"
         )
 
     return locations
@@ -353,16 +665,18 @@ def get_xml_locations(xml_text):
 
 def fetch_hobbiesville_products(store):
     """
-    Discover Hobbiesville Lorcana products through its
-    Shopify product sitemaps.
+    Discover Hobbiesville Lorcana products through
+    its Shopify product sitemaps.
 
     Hobbiesville search can omit valid product pages,
     so sitemap discovery is used instead.
     """
+
     products = []
 
     sitemap_index_url = (
-        store["base_url"] + store["feed"]
+        store["base_url"]
+        + store["feed"]
     )
 
     try:
@@ -371,6 +685,7 @@ def fetch_hobbiesville_products(store):
             headers=HEADERS,
             timeout=30,
         )
+
         response.raise_for_status()
 
     except requests.RequestException as error:
@@ -378,6 +693,7 @@ def fetch_hobbiesville_products(store):
             f"Could not fetch Hobbiesville "
             f"sitemap index: {error}"
         )
+
         return products
 
     sitemap_urls = get_xml_locations(
@@ -404,14 +720,16 @@ def fetch_hobbiesville_products(store):
                 headers=HEADERS,
                 timeout=30,
             )
+
             sitemap_response.raise_for_status()
 
         except requests.RequestException as error:
             print(
                 f"Could not fetch Hobbiesville "
-                f"product sitemap {sitemap_url}: "
-                f"{error}"
+                f"product sitemap "
+                f"{sitemap_url}: {error}"
             )
+
             continue
 
         locations = get_xml_locations(
@@ -419,21 +737,24 @@ def fetch_hobbiesville_products(store):
         )
 
         for product_url in locations:
-            normalized_url = product_url.lower()
+            normalized_url = (
+                product_url.lower()
+            )
 
             if (
                 "/products/" in normalized_url
                 and "lorcana" in normalized_url
             ):
                 product_urls.add(
-                    product_url.split("?")[0]
+                    product_url
+                    .split("?")[0]
                 )
 
         time.sleep(0.2)
 
     print(
-        f"Hobbiesville Lorcana product URLs found: "
-        f"{len(product_urls)}"
+        f"Hobbiesville Lorcana product URLs "
+        f"found: {len(product_urls)}"
     )
 
     for product_url in sorted(product_urls):
@@ -443,6 +764,7 @@ def fetch_hobbiesville_products(store):
                 headers=HEADERS,
                 timeout=30,
             )
+
             product_response.raise_for_status()
             product = product_response.json()
 
@@ -454,6 +776,7 @@ def fetch_hobbiesville_products(store):
                 f"Could not fetch "
                 f"{product_url}: {error}"
             )
+
             continue
 
         title = product.get("title", "")
@@ -475,126 +798,132 @@ def fetch_hobbiesville_products(store):
     return products
 
 
+# ------------------------------------------------------------
+# TARGETED SHOPIFY SEARCH
+# ------------------------------------------------------------
+
 def fetch_shopify_search_products(store):
     """
-    Ask Shopify for products matching Into the Inkdark
-    instead of downloading the retailer's entire catalogue.
+    Ask Shopify specifically for products matching the
+    Lorcana sets being monitored instead of downloading
+    the retailer's entire catalogue.
     """
+
     products = []
     seen_ids = set()
 
     search_terms = [
         "into the inkdark",
         "inkdark",
+        "hyperia city",
+        "cosmic quest",
     ]
 
     for search_term in search_terms:
-        page = 1
+        url = (
+            store["base_url"].rstrip("/")
+            + "/search/suggest.json"
+        )
 
-        while True:
-            url = (
-                store["base_url"].rstrip("/")
-                + "/search/suggest.json"
+        try:
+            response = requests.get(
+                url,
+                params={
+                    "q": search_term,
+                    "resources[type]": "product",
+                    "resources[limit]": 10,
+                    "resources[options]"
+                    "[unavailable_products]": "show",
+                },
+                headers=HEADERS,
+                timeout=30,
+            )
+
+            response.raise_for_status()
+            data = response.json()
+
+        except (
+            requests.RequestException,
+            ValueError,
+        ) as error:
+            print(
+                f"Could not search "
+                f"{store['name']} for "
+                f"'{search_term}': {error}"
+            )
+
+            continue
+
+        predictive = (
+            data
+            .get("resources", {})
+            .get("results", {})
+            .get("products", [])
+        )
+
+        for result in predictive:
+            product_url = result.get(
+                "url",
+                "",
+            )
+
+            if not product_url:
+                continue
+
+            if product_url.startswith("/"):
+                product_url = (
+                    store["base_url"]
+                    .rstrip("/")
+                    + product_url
+                )
+
+            product_url = (
+                product_url
+                .split("?")[0]
+                .rstrip("/")
+            )
+
+            json_url = (
+                product_url + ".js"
             )
 
             try:
-                response = requests.get(
-                    url,
-                    params={
-                        "q": search_term,
-                        "resources[type]": "product",
-                        "resources[limit]": 10,
-                        "resources[options][unavailable_products]": "show",
-                    },
+                product_response = requests.get(
+                    json_url,
                     headers=HEADERS,
                     timeout=30,
                 )
 
-                response.raise_for_status()
-                data = response.json()
+                product_response.raise_for_status()
+                product = (
+                    product_response.json()
+                )
 
             except (
                 requests.RequestException,
                 ValueError,
             ) as error:
                 print(
-                    f"Could not search "
-                    f"{store['name']} for "
-                    f"'{search_term}': {error}"
+                    f"Could not fetch "
+                    f"{product_url}: {error}"
                 )
-                break
 
-            predictive = (
-                data
-                .get("resources", {})
-                .get("results", {})
-                .get("products", [])
+                continue
+
+            product_id = str(
+                product.get("id", "")
             )
 
-            if not predictive:
-                break
+            if (
+                not product_id
+                or product_id in seen_ids
+            ):
+                continue
 
-            new_products_found = 0
+            seen_ids.add(product_id)
+            products.append(product)
 
-            for result in predictive:
-                product_url = result.get("url", "")
-
-                if not product_url:
-                    continue
-
-                if product_url.startswith("/"):
-                    product_url = (
-                        store["base_url"].rstrip("/")
-                        + product_url
-                    )
-
-                product_url = (
-                    product_url
-                    .split("?")[0]
-                    .rstrip("/")
-                )
-
-                json_url = product_url + ".js"
-
-                try:
-                    product_response = requests.get(
-                        json_url,
-                        headers=HEADERS,
-                        timeout=30,
-                    )
-                    product_response.raise_for_status()
-                    product = product_response.json()
-
-                except (
-                    requests.RequestException,
-                    ValueError,
-                ) as error:
-                    print(
-                        f"Could not fetch "
-                        f"{product_url}: {error}"
-                    )
-                    continue
-
-                product_id = str(
-                    product.get("id", "")
-                )
-
-                if (
-                    not product_id
-                    or product_id in seen_ids
-                ):
-                    continue
-
-                seen_ids.add(product_id)
-                products.append(product)
-                new_products_found += 1
-
-                time.sleep(0.2)
-
-            # Shopify predictive search returns a limited
-            # result set rather than traditional pages.
-            # One request per search term is sufficient.
-            break
+            time.sleep(0.2)
 
     print(
         f"{store['name']} targeted search "
@@ -604,16 +933,24 @@ def fetch_shopify_search_products(store):
     return products
 
 
+# ------------------------------------------------------------
+# STANDARD SHOPIFY COLLECTION FEEDS
+# ------------------------------------------------------------
+
 def fetch_store_products(store):
     special_handler = store.get(
         "special_handler"
     )
 
     if special_handler == "hobbiesville":
-        return fetch_hobbiesville_products(store)
+        return fetch_hobbiesville_products(
+            store
+        )
 
     if special_handler == "shopify_search":
-        return fetch_shopify_search_products(store)
+        return fetch_shopify_search_products(
+            store
+        )
 
     products = []
     page = 1
@@ -647,11 +984,12 @@ def fetch_store_products(store):
                 f"{store['name']} "
                 f"page {page}: {error}"
             )
+
             break
 
         page_products = data.get(
             "products",
-            []
+            [],
         )
 
         if not page_products:
@@ -668,13 +1006,25 @@ def fetch_store_products(store):
     return products
 
 
+# ------------------------------------------------------------
+# MAIN MONITOR
+# ------------------------------------------------------------
+
 def main():
     previous_state = load_state()
+
+    # Preserve existing state so a temporary retailer
+    # failure does not erase previously tracked products.
     current_state = previous_state.copy()
 
     products_checked = 0
     matches_found = 0
     alerts_sent = 0
+
+    set_match_counts = {
+        set_name: 0
+        for set_name in SETS
+    }
 
     for store in STORES:
         print(
@@ -695,13 +1045,20 @@ def main():
         for product in products:
             title = product.get(
                 "title",
-                ""
+                "",
             )
 
             if not is_target_product(title):
                 continue
 
+            set_name = identify_set(title)
+
+            if not set_name:
+                continue
+
             matches_found += 1
+
+            set_match_counts[set_name] += 1
 
             product_id = str(
                 product.get("id", "")
@@ -709,7 +1066,7 @@ def main():
 
             handle = product.get(
                 "handle",
-                ""
+                "",
             )
 
             if not product_id or not handle:
@@ -721,7 +1078,8 @@ def main():
             )
 
             product_url = (
-                store["base_url"].rstrip("/")
+                store["base_url"]
+                .rstrip("/")
                 + "/products/"
                 + handle
             )
@@ -743,6 +1101,7 @@ def main():
             new_entry = {
                 "store": store["name"],
                 "product_id": product_id,
+                "set": set_name,
                 "title": title,
                 "url": product_url,
                 "available": available,
@@ -755,10 +1114,15 @@ def main():
                 new_entry
             )
 
+            # ------------------------------------------------
+            # NEW PRODUCT LISTING
+            # ------------------------------------------------
+
             if old_entry is None:
                 alert_sent = (
                     send_discord_alert(
                         store["name"],
+                        set_name,
                         title,
                         product_url,
                         image_url,
@@ -770,6 +1134,7 @@ def main():
 
                 if alert_sent:
                     alerts_sent += 1
+
                 else:
                     current_state.pop(
                         state_key,
@@ -777,6 +1142,10 @@ def main():
                     )
 
                 continue
+
+            # ------------------------------------------------
+            # EXISTING PRODUCT BECOMES AVAILABLE
+            # ------------------------------------------------
 
             was_available = bool(
                 old_entry.get("available")
@@ -786,6 +1155,7 @@ def main():
                 alert_sent = (
                     send_discord_alert(
                         store["name"],
+                        set_name,
                         title,
                         product_url,
                         image_url,
@@ -797,6 +1167,7 @@ def main():
 
                 if alert_sent:
                     alerts_sent += 1
+
                 else:
                     current_state[
                         state_key
@@ -804,25 +1175,41 @@ def main():
 
     save_state(current_state)
 
+    # --------------------------------------------------------
+    # SUMMARY
+    # --------------------------------------------------------
+
     print(
-        "\n--- Into the Inkdark "
+        "\n--- Lorcana Canada "
         "Monitor Summary ---"
     )
+
     print(
         f"Stores checked: {len(STORES)}"
     )
+
     print(
         f"Products checked: "
         f"{products_checked}"
     )
+
     print(
         f"Target products found: "
         f"{matches_found}"
     )
+
+    for set_name in SETS:
+        print(
+            f"{set_name}: "
+            f"{set_match_counts[set_name]} "
+            f"qualifying products"
+        )
+
     print(
         f"Discord alerts sent: "
         f"{alerts_sent}"
     )
+
     print(
         f"Products tracked: "
         f"{len(current_state)}"
