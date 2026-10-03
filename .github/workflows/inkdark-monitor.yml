@@ -31,7 +31,7 @@ jobs:
       - name: Run Into the Inkdark monitor
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python inkdark_checker.py
+        run: python lorcana_canada_monitor.py
 
       - name: Save Into the Inkdark state
         run: |
