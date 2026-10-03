@@ -863,12 +863,12 @@ def fetch_shopify_search_products(store):
     products = []
     seen_ids = set()
 
-    search_terms = [
-        "into the inkdark",
-        "inkdark",
-        "hyperia city",
-        "cosmic quest",
-    ]
+    search_terms = []
+
+    for config in SETS.values():
+        for alias in config.get("aliases", []):
+            if alias not in search_terms:
+                search_terms.append(alias)
 
     for search_term in search_terms:
         url = (
