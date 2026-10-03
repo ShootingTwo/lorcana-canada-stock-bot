@@ -9,11 +9,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: into-the-inkdark-monitor
+  group: lorcana-canada-monitor
   cancel-in-progress: false
 
 jobs:
-  check-inkdark:
+  check-lorcana:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,20 +33,20 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python lorcana_canada_monitor.py
 
-        - name: Save Lorcana Canada state
-          run: |
-            git config user.name "Lorcana Stock Bot"
-            git config user.email "actions@github.com"
-  
-            cp lorcana_canada_state.json /tmp/lorcana_canada_state.json
-            git reset --hard
-            git pull --rebase origin main
-            cp /tmp/lorcana_canada_state.json lorcana_canada_state.json
-            git add lorcana_canada_state.json
-  
-            if git diff --cached --quiet; then
-              echo "No Lorcana Canada state changes to save."
-            else
-              git commit -m "Update Lorcana Canada state"
-              git push origin main
-            fi
+      - name: Save Lorcana Canada state
+        run: |
+          git config user.name "Lorcana Stock Bot"
+          git config user.email "actions@github.com"
+
+          cp lorcana_canada_state.json /tmp/lorcana_canada_state.json
+          git reset --hard
+          git pull --rebase origin main
+          cp /tmp/lorcana_canada_state.json lorcana_canada_state.json
+          git add lorcana_canada_state.json
+
+          if git diff --cached --quiet; then
+            echo "No Lorcana Canada state changes to save."
+          else
+            git commit -m "Update Lorcana Canada state"
+            git push origin main
+          fi
