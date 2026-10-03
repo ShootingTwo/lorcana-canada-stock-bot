@@ -1,8 +1,27 @@
 {
+  "401 Games::8388238606523": {
+    "available": false,
+    "price": 0.0,
+    "product_id": "8388238606523",
+    "set": "Hyperia City",
+    "store": "401 Games",
+    "title": "Disney Lorcana: Hyperia City - Booster Box (Pre-Order)",
+    "url": "https://store.401games.ca/products/disney-lorcana-hyperia-city-booster-box"
+  },
+  "401 Games::8388241850555": {
+    "available": false,
+    "price": 0.0,
+    "product_id": "8388241850555",
+    "set": "Hyperia City",
+    "store": "401 Games",
+    "title": "Disney Lorcana: Hyperia City - Illumineer's Trove (Pre-Order)",
+    "url": "https://store.401games.ca/products/disney-lorcana-hyperia-city-illumineers-trove"
+  },
   "401 Games::8457348186299": {
     "available": false,
     "price": 0.0,
     "product_id": "8457348186299",
+    "set": "Into the Inkdark",
     "store": "401 Games",
     "title": "Disney Lorcana: Into the Inkdark - Booster Box (Pre-Order)",
     "url": "https://store.401games.ca/products/disney-lorcana-into-the-inkdark-booster-box"
@@ -11,22 +30,196 @@
     "available": false,
     "price": 0.0,
     "product_id": "8457356017851",
+    "set": "Into the Inkdark",
     "store": "401 Games",
     "title": "Disney Lorcana:  Into the Inkdark - Illumineer's Trove (Pre-Order)",
     "url": "https://store.401games.ca/products/disney-lorcana-into-the-inkdark-illumineers-trove"
+  },
+  "Amazing Stories::10305307443284": {
+    "available": false,
+    "price": 17999.0,
+    "product_id": "10305307443284",
+    "set": "Hyperia City",
+    "store": "Amazing Stories",
+    "title": "Disney Lorcana: Hyperia City - Booster Box",
+    "url": "https://amazingstoriesgames.ca/products/disney-lorcana-hyperia-city-booster-box"
+  },
+  "Amazing Stories::10305321402452": {
+    "available": false,
+    "price": 6999.0,
+    "product_id": "10305321402452",
+    "set": "Hyperia City",
+    "store": "Amazing Stories",
+    "title": "Disney Lorcana: Hyperia City - Illumineer's Trove",
+    "url": "https://amazingstoriesgames.ca/products/disney-lorcana-hyperia-city-illumineers-trove"
+  },
+  "Board Game Bliss::7922212405299": {
+    "available": false,
+    "price": 6095.0,
+    "product_id": "7922212405299",
+    "set": "Hyperia City",
+    "store": "Board Game Bliss",
+    "title": "Disney Lorcana - Hyperia City - Illumineer's Trove *PRE-ORDER*",
+    "url": "https://www.boardgamebliss.com/products/disney-lorcana-hyperia-city-illumineers-trove"
+  },
+  "Board Game Bliss::7922219909171": {
+    "available": false,
+    "price": 17795.0,
+    "product_id": "7922219909171",
+    "set": "Hyperia City",
+    "store": "Board Game Bliss",
+    "title": "Disney Lorcana - Hyperia City - Booster Box *PRE-ORDER*",
+    "url": "https://www.boardgamebliss.com/products/disney-lorcana-hyperia-city-booster-box"
+  },
+  "Cardboard Hero Games and Collectibles::10347813503162": {
+    "available": false,
+    "price": 19999.0,
+    "product_id": "10347813503162",
+    "set": "Hyperia City",
+    "store": "Cardboard Hero Games and Collectibles",
+    "title": "(Pre-Order) Lorcana Hyperia City Booster Box",
+    "url": "https://cardboardhero.com/products/pre-order-lorcana-hyperia-city-booster-box"
+  },
+  "Cardboard Memories::9161761259674": {
+    "available": false,
+    "price": 0.0,
+    "product_id": "9161761259674",
+    "set": "Hyperia City",
+    "store": "Cardboard Memories",
+    "title": "Disney - Lorcana - Hyperia City - Booster Box - Pre-Order",
+    "url": "https://www.cardboardmemories.ca/products/disney-lorcana-hyperia-city-booster-box-pre-order"
+  },
+  "Cardboard Memories::9161814933658": {
+    "available": false,
+    "price": 0.0,
+    "product_id": "9161814933658",
+    "set": "Hyperia City",
+    "store": "Cardboard Memories",
+    "title": "Disney - Lorcana - Hyperia City - Illumineer\u2019s Trove - Pre-Order",
+    "url": "https://www.cardboardmemories.ca/products/disney-lorcana-hyperia-city-illumineer-s-trove-pre-order"
+  },
+  "Face to Face Games::15217893310836": {
+    "available": true,
+    "price": 249.99,
+    "product_id": "15217893310836",
+    "set": "Hyperia City",
+    "store": "Face to Face Games",
+    "title": "Disney Lorcana: Hyperia City - Booster Box",
+    "url": "https://facetofacegames.com/products/disney-lorcana-hyperia-city-booster-box"
+  },
+  "Game Shack::8588131368994": {
+    "available": false,
+    "price": 0.0,
+    "product_id": "8588131368994",
+    "set": "Hyperia City",
+    "store": "Game Shack",
+    "title": "Disney Lorcana: Hyperia City - Booster Box",
+    "url": "https://www.gameshack.ca/products/lor-hyperia-city-bbx-114233"
+  },
+  "Game Shack::8588131434530": {
+    "available": false,
+    "price": 0.0,
+    "product_id": "8588131434530",
+    "set": "Hyperia City",
+    "store": "Game Shack",
+    "title": "Disney Lorcana: Hyperia City - Illumineer's Trove",
+    "url": "https://www.gameshack.ca/products/lor-hyperia-city-illumineers-114234"
+  },
+  "Heroes World::9307936555265": {
+    "available": false,
+    "price": 69.99,
+    "product_id": "9307936555265",
+    "set": "Hyperia City",
+    "store": "Heroes World",
+    "title": "[PREORDER] Illumineer's Trove | Set 14 Hyperia City | Disney Lorcana TCG",
+    "url": "https://heroesworld.ca/products/illumineers-trove-set-14-hyperia-city-disney-lorcana-tcg"
+  },
+  "Heroes World::9307936784641": {
+    "available": false,
+    "price": 249.99,
+    "product_id": "9307936784641",
+    "set": "Hyperia City",
+    "store": "Heroes World",
+    "title": "[PREORDER] Booster Box | Set 14 Hyperia City | Disney Lorcana TCG",
+    "url": "https://heroesworld.ca/products/booster-box-set-14-hyperia-city-disney-lorcana-tcg"
+  },
+  "Hobbiesville::9070300004490": {
+    "available": false,
+    "price": 24995.0,
+    "product_id": "9070300004490",
+    "set": "Hyperia City",
+    "store": "Hobbiesville",
+    "title": "Disney Lorcana: Hyperia City - Booster Box (Pre Order)",
+    "url": "https://www.hobbiesville.com/products/disney-lorcana-hyperia-city-booster-box-pre-order"
+  },
+  "Hobbiesville::9070302462090": {
+    "available": false,
+    "price": 7495.0,
+    "product_id": "9070302462090",
+    "set": "Hyperia City",
+    "store": "Hobbiesville",
+    "title": "Disney Lorcana: Hyperia City - Trove (Pre Order)",
+    "url": "https://www.hobbiesville.com/products/disney-lorcana-hyperia-city-trove-pre-order"
   },
   "Hobbiesville::9237841641610": {
     "available": false,
     "price": 21995.0,
     "product_id": "9237841641610",
+    "set": "Into the Inkdark",
     "store": "Hobbiesville",
     "title": "Disney Lorcana: Into the Inkdark - Booster Box (Pre Order)",
     "url": "https://www.hobbiesville.com/products/disney-lorcana-into-the-inkdark-booster-box-pre-order"
+  },
+  "Hobbiesville::9254693699722": {
+    "available": false,
+    "price": 6495.0,
+    "product_id": "9254693699722",
+    "set": "Into the Inkdark",
+    "store": "Hobbiesville",
+    "title": "Disney Lorcana: Into the Inkdark - Trove (Pre Order)",
+    "url": "https://www.hobbiesville.com/products/disney-lorcana-into-the-inkdark-trove-pre-order"
+  },
+  "Hope Club::8449847722028": {
+    "available": true,
+    "price": 22999.0,
+    "product_id": "8449847722028",
+    "set": "Hyperia City",
+    "store": "Hope Club",
+    "title": "Disney Lorcana: Set 14 - Hyperia City Booster Box (Pre-order)",
+    "url": "https://hopeclubshop.ca/products/disney-lorcana-set-14-hyperia-city-booster-box"
+  },
+  "Hope Club::8449851195436": {
+    "available": false,
+    "price": 8499.0,
+    "product_id": "8449851195436",
+    "set": "Hyperia City",
+    "store": "Hope Club",
+    "title": "Disney Lorcana: Set 14 - Hyperia City Illumineer's Trove (Pre-order)",
+    "url": "https://hopeclubshop.ca/products/disney-lorcana-set-14-hyperia-city-illumineers-trove"
+  },
+  "Kanzen::9363279806679": {
+    "available": false,
+    "price": 209.95,
+    "product_id": "9363279806679",
+    "set": "Hyperia City",
+    "store": "Kanzen",
+    "title": "Disney Lorcana: Hyperia City Booster Box (Pre-Order) Limit 4 Per Customer",
+    "url": "https://kanzengames.com/products/disney-lorcana-hyperia-city-booster-box"
+  },
+  "Kanzen::9363279937751": {
+    "available": false,
+    "price": 59.95,
+    "product_id": "9363279937751",
+    "set": "Hyperia City",
+    "store": "Kanzen",
+    "title": "Disney Lorcana: Hyperia City Illumineer's Trove (Pre-Order)",
+    "url": "https://kanzengames.com/products/disney-lorcana-hyperia-city-illumineers-trove"
   },
   "Kanzen::9374302011607": {
     "available": false,
     "price": 59.95,
     "product_id": "9374302011607",
+    "set": "Into the Inkdark",
     "store": "Kanzen",
     "title": "Disney Lorcana: Into The InkDark Illumineer's Trove (Pre-Order)",
     "url": "https://kanzengames.com/products/disney-lorcana-into-the-inkdark-illumineers-trove-pre-order"
@@ -35,8 +228,81 @@
     "available": false,
     "price": 209.95,
     "product_id": "9374302208215",
+    "set": "Into the Inkdark",
     "store": "Kanzen",
     "title": "Disney Lorcana: Into The InkDark Booster Box (Pre-Order) Limit 4 Per Customer",
     "url": "https://kanzengames.com/products/disney-lorcana-into-the-inkdark-booster-box-pre-order"
+  },
+  "Le Coin du Jeu::10549600125109": {
+    "available": false,
+    "price": 0.0,
+    "product_id": "10549600125109",
+    "set": "Hyperia City",
+    "store": "Le Coin du Jeu",
+    "title": "Disney Lorcana Hyperia City Booster Box (EN) (2026-10-16)",
+    "url": "https://www.lecoindujeu.ca/products/disney-lorcana-hyperia-city-booster-box"
+  },
+  "Le Coin du Jeu::10549600813237": {
+    "available": false,
+    "price": 0.0,
+    "product_id": "10549600813237",
+    "set": "Hyperia City",
+    "store": "Le Coin du Jeu",
+    "title": "Disney Lorcana Hyperia City Illumineers Trove (EN) (2026-10-16)",
+    "url": "https://www.lecoindujeu.ca/products/disney-lorcana-hyperia-city-illumineers-trove"
+  },
+  "New Realm Games::9472179142914": {
+    "available": false,
+    "price": 199.95,
+    "product_id": "9472179142914",
+    "set": "Hyperia City",
+    "store": "New Realm Games",
+    "title": "Disney Lorcana: Hyperia City - Booster Box (Pre Order)",
+    "url": "https://newrealmgames.com/products/disney-lorcana-hyperia-city-booster-box-pre-order"
+  },
+  "New Realm Games::9472179372290": {
+    "available": false,
+    "price": 64.95,
+    "product_id": "9472179372290",
+    "set": "Hyperia City",
+    "store": "New Realm Games",
+    "title": "Disney Lorcana: Hyperia City - Trove (Pre Order)",
+    "url": "https://newrealmgames.com/products/disney-lorcana-hyperia-city-trove-pre-order"
+  },
+  "Northern War Table::10326789128278": {
+    "available": true,
+    "price": 199.99,
+    "product_id": "10326789128278",
+    "set": "Hyperia City",
+    "store": "Northern War Table",
+    "title": "[Pre Order] Hyperia City Booster Box",
+    "url": "https://northernwartable.com/products/hyperia-city-booster-box"
+  },
+  "The Mythic Store::15837314384032": {
+    "available": true,
+    "price": 219.99,
+    "product_id": "15837314384032",
+    "set": "Hyperia City",
+    "store": "The Mythic Store",
+    "title": "Hyperia City - Booster Box",
+    "url": "https://themythicstore.com/products/hyperia-city-booster-box"
+  },
+  "The Mythic Store::15837317398688": {
+    "available": true,
+    "price": 109.99,
+    "product_id": "15837317398688",
+    "set": "Hyperia City",
+    "store": "The Mythic Store",
+    "title": "Hyperia City - Illumineer's Trove",
+    "url": "https://themythicstore.com/products/hyperia-city-illumineers-trove"
+  },
+  "Wizard's Tower::8597350154410": {
+    "available": false,
+    "price": 18999.0,
+    "product_id": "8597350154410",
+    "set": "Hyperia City",
+    "store": "Wizard's Tower",
+    "title": "Disney Lorcana Hyperia City Booster Box",
+    "url": "https://store.wizardtower.com/products/disney-lorcana-hyperia-city-booster-box"
   }
 }
