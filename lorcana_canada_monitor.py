@@ -388,6 +388,43 @@ def is_target_product(title):
 
     title_lower = normalize_text(title)
 
+    product_types = SETS[set_name].get(
+        "product_types",
+        {},
+    )
+
+    # Booster Boxes and Booster Displays
+    if (
+        product_types.get("booster_box", False)
+        and (
+            "booster box" in title_lower
+            or "booster display" in title_lower
+        )
+    ):
+        return True
+
+    # Any product containing "Trove"
+    if (
+        product_types.get("trove", False)
+        and "trove" in title_lower
+    ):
+        return True
+
+    # Individual Collector Booster Packs.
+    # Currently enabled only for Into the Inkdark.
+    if (
+        product_types.get(
+            "collector_booster_pack",
+            False,
+        )
+        and is_collector_booster_pack(title)
+    ):
+        return True
+
+    return False
+
+    title_lower = normalize_text(title)
+
     # All monitored sets include booster boxes/displays.
     if (
         "booster box" in title_lower
