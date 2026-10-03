@@ -10,7 +10,7 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 
 # Keep using the existing state file for now so that products
 # already tracked by the old Into the Inkdark monitor are preserved.
-STATE_FILE = "inkdark_state.json"
+STATE_FILE = "lorcana_canada_state.json"
 
 
 # ------------------------------------------------------------
