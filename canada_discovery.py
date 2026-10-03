@@ -98,12 +98,7 @@ SEED_STORES = [
     },
 ]
 
-DISCOVERY_SOURCES = [
-    {
-        "name": "Ravensburger Store Locator",
-        "url": "https://www.ravensburger.ca/en-CA/service/store-locator",
-    },
-]
+DISCOVERY_SOURCES = []
 
 SET_TERMS = [
     "into the inkdark",
@@ -897,26 +892,6 @@ def send_discord_alert(
 def main():
     run_start = time.time()
     
-    candidate_retailers = discover_candidate_retailers()
-
-    print()
-    print(
-        "--- RETAILER DISCOVERY TEST ---"
-    )
-
-    for domain, retailer in sorted(
-        candidate_retailers.items()
-    ):
-        print(
-            f"{domain} | "
-            f"{retailer['source']}"
-        )
-
-    print(
-        f"Candidate domains found: "
-        f"{len(candidate_retailers)}"
-    )
-
     previous_state = load_state()
     current_state = (
         previous_state.copy()
