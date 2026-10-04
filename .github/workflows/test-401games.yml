@@ -2,7 +2,6 @@ name: 401 Games Lorcana Stock Checker
 
 on:
   workflow_dispatch:
-  schedule:
 
 concurrency:
   group: 401-games-stock-checker
