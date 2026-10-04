@@ -3,7 +3,6 @@ name: 401 Games Lorcana Stock Checker
 on:
   workflow_dispatch:
   schedule:
-    - cron: "3,13,23,33,43,53 * * * *"
 
 concurrency:
   group: 401-games-stock-checker
