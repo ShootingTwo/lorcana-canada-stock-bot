@@ -2,7 +2,6 @@ name: Face to Face Lorcana Stock Checker
 
 on:
   workflow_dispatch:
-  schedule:
 
 concurrency:
   group: facetoface-lorcana-stock
