@@ -234,8 +234,8 @@
     "url": "https://kanzengames.com/products/disney-lorcana-into-the-inkdark-booster-box-pre-order"
   },
   "Le Coin du Jeu::10549600125109": {
-    "available": false,
-    "price": 0.0,
+    "available": true,
+    "price": 229.99,
     "product_id": "10549600125109",
     "set": "Hyperia City",
     "store": "Le Coin du Jeu",
@@ -243,8 +243,8 @@
     "url": "https://www.lecoindujeu.ca/products/disney-lorcana-hyperia-city-booster-box"
   },
   "Le Coin du Jeu::10549600813237": {
-    "available": false,
-    "price": 0.0,
+    "available": true,
+    "price": 99.99,
     "product_id": "10549600813237",
     "set": "Hyperia City",
     "store": "Le Coin du Jeu",
