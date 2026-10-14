@@ -153,7 +153,7 @@
     "url": "https://www.fantasyforged.ca/products/hyperia-city-illumineers-trove"
   },
   "Game Shack::8588131368994": {
-    "available": false,
+    "available": true,
     "price": 0.0,
     "product_id": "8588131368994",
     "set": "Hyperia City",
@@ -162,7 +162,7 @@
     "url": "https://www.gameshack.ca/products/lor-hyperia-city-bbx-114233"
   },
   "Game Shack::8588131434530": {
-    "available": false,
+    "available": true,
     "price": 0.0,
     "product_id": "8588131434530",
     "set": "Hyperia City",
