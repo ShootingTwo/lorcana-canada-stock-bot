@@ -1,7 +1,7 @@
 {
   "401 Games::8388238606523": {
     "available": false,
-    "price": 0.0,
+    "price": 229.95,
     "product_id": "8388238606523",
     "set": "Hyperia City",
     "store": "401 Games",
@@ -9,8 +9,8 @@
     "url": "https://store.401games.ca/products/disney-lorcana-hyperia-city-booster-box"
   },
   "401 Games::8388241850555": {
-    "available": false,
-    "price": 0.0,
+    "available": true,
+    "price": 119.95,
     "product_id": "8388241850555",
     "set": "Hyperia City",
     "store": "401 Games",
@@ -172,7 +172,7 @@
   },
   "Game Shack::8588131368994": {
     "available": true,
-    "price": 0.0,
+    "price": 239.99,
     "product_id": "8588131368994",
     "set": "Hyperia City",
     "store": "Game Shack",
@@ -181,7 +181,7 @@
   },
   "Game Shack::8588131434530": {
     "available": true,
-    "price": 0.0,
+    "price": 99.99,
     "product_id": "8588131434530",
     "set": "Hyperia City",
     "store": "Game Shack",
