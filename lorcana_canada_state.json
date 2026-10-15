@@ -396,7 +396,7 @@
     "url": "https://tistaminis.com/products/disney-lorcana-set-14-hyperia-city-illumineers-trove"
   },
   "Untouchables::15440374202462": {
-    "available": false,
+    "available": true,
     "price": 249.95,
     "product_id": "15440374202462",
     "set": "Hyperia City",
@@ -405,7 +405,7 @@
     "url": "https://untouchables.ca/products/ravensburger-disney-lorcana-hyperia-city-booster-box-preorder"
   },
   "Untouchables::15440381608030": {
-    "available": false,
+    "available": true,
     "price": 119.95,
     "product_id": "15440381608030",
     "set": "Hyperia City",
