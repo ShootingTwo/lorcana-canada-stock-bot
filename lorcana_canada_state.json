@@ -430,5 +430,14 @@
     "store": "Wizard's Tower",
     "title": "Disney Lorcana Hyperia City Booster Box",
     "url": "https://store.wizardtower.com/products/disney-lorcana-hyperia-city-booster-box"
+  },
+  "Wizard's Tower::8597352120490": {
+    "available": true,
+    "price": 6499.0,
+    "product_id": "8597352120490",
+    "set": "Hyperia City",
+    "store": "Wizard's Tower",
+    "title": "Disney Lorcana Hyperia City Illumineer's Trove",
+    "url": "https://store.wizardtower.com/products/disney-lorcana-hyperia-city-illumineers-trove"
   }
 }
