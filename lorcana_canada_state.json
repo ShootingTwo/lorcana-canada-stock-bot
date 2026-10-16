@@ -127,7 +127,7 @@
   },
   "Face to Face Games::15217893310836": {
     "available": true,
-    "price": 249.99,
+    "price": 229.99,
     "product_id": "15217893310836",
     "set": "Hyperia City",
     "store": "Face to Face Games",
@@ -181,7 +181,7 @@
   },
   "Game Shack::8588131368994": {
     "available": true,
-    "price": 239.99,
+    "price": 209.99,
     "product_id": "8588131368994",
     "set": "Hyperia City",
     "store": "Game Shack",
@@ -270,7 +270,7 @@
     "url": "https://www.hobbiesville.com/products/disney-lorcana-into-the-inkdark-trove-pre-order"
   },
   "Hope Club::8449847722028": {
-    "available": false,
+    "available": true,
     "price": 21499.0,
     "product_id": "8449847722028",
     "set": "Hyperia City",
@@ -279,7 +279,7 @@
     "url": "https://hopeclubshop.ca/products/disney-lorcana-set-14-hyperia-city-booster-box"
   },
   "Hope Club::8449851195436": {
-    "available": false,
+    "available": true,
     "price": 8499.0,
     "product_id": "8449851195436",
     "set": "Hyperia City",
