@@ -9,7 +9,7 @@
     "url": "https://store.401games.ca/products/disney-lorcana-into-the-inkdark-collector-booster-box"
   },
   "401 Games::8388238606523": {
-    "available": false,
+    "available": true,
     "price": 229.95,
     "product_id": "8388238606523",
     "set": "Hyperia City",
@@ -18,7 +18,7 @@
     "url": "https://store.401games.ca/products/disney-lorcana-hyperia-city-booster-box"
   },
   "401 Games::8388241850555": {
-    "available": false,
+    "available": true,
     "price": 119.95,
     "product_id": "8388241850555",
     "set": "Hyperia City",
@@ -82,7 +82,7 @@
   },
   "Boreal Gaming & Cards::15429250941016": {
     "available": false,
-    "price": 21999.0,
+    "price": 22999.0,
     "product_id": "15429250941016",
     "set": "Hyperia City",
     "store": "Boreal Gaming & Cards",
