@@ -270,7 +270,7 @@
     "url": "https://www.hobbiesville.com/products/disney-lorcana-into-the-inkdark-trove-pre-order"
   },
   "Hope Club::8449847722028": {
-    "available": true,
+    "available": false,
     "price": 21499.0,
     "product_id": "8449847722028",
     "set": "Hyperia City",
@@ -279,7 +279,7 @@
     "url": "https://hopeclubshop.ca/products/disney-lorcana-set-14-hyperia-city-booster-box"
   },
   "Hope Club::8449851195436": {
-    "available": true,
+    "available": false,
     "price": 8499.0,
     "product_id": "8449851195436",
     "set": "Hyperia City",
@@ -340,6 +340,15 @@
     "store": "Le Coin du Jeu",
     "title": "Disney Lorcana Hyperia City Illumineers Trove (EN) (2026-10-23)",
     "url": "https://www.lecoindujeu.ca/products/disney-lorcana-hyperia-city-illumineers-trove"
+  },
+  "Mystic Dragon::15433869558004": {
+    "available": false,
+    "price": 69.95,
+    "product_id": "15433869558004",
+    "set": "Hyperia City",
+    "store": "Mystic Dragon",
+    "title": "Lorcana Set 14 Hyperia City Illumineers Trove",
+    "url": "https://mystic-dragon.ca/products/lorcana-set-14-hyperia-city-illumineers-trove"
   },
   "New Realm Games::9472179142914": {
     "available": false,
