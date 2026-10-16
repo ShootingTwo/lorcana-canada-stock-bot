@@ -81,7 +81,7 @@
     "url": "https://www.boardgamebliss.com/products/disney-lorcana-hyperia-city-booster-box"
   },
   "Boreal Gaming & Cards::15429250941016": {
-    "available": true,
+    "available": false,
     "price": 21999.0,
     "product_id": "15429250941016",
     "set": "Hyperia City",
@@ -415,7 +415,7 @@
   },
   "The Upper Hand::15424346259499": {
     "available": true,
-    "price": 249.95,
+    "price": 239.95,
     "product_id": "15424346259499",
     "set": "Hyperia City",
     "store": "The Upper Hand",
