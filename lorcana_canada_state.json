@@ -86,7 +86,7 @@
     "product_id": "15429250941016",
     "set": "Hyperia City",
     "store": "Boreal Gaming & Cards",
-    "title": "Disney Lorcana: Hyperia City Booster Box - Pre Order",
+    "title": "Disney Lorcana: Hyperia City Booster Box",
     "url": "https://borealgaming.com/products/disney-lorcana-hyperia-city-booster-box-pre-order"
   },
   "Boreal Gaming & Cards::15429252907096": {
@@ -403,6 +403,15 @@
     "store": "The Mythic Store",
     "title": "Hyperia City - Illumineer's Trove",
     "url": "https://themythicstore.com/products/hyperia-city-illumineers-trove"
+  },
+  "The Upper Hand::15424346259499": {
+    "available": true,
+    "price": 249.95,
+    "product_id": "15424346259499",
+    "set": "Hyperia City",
+    "store": "The Upper Hand",
+    "title": "Disney Lorcana: Hyperia City - Booster Box",
+    "url": "https://www.theupperhand.ca/products/disney-lorcana-hyperia-city-booster-box"
   },
   "Tistaminis::15398966985011": {
     "available": false,
