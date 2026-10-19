@@ -261,8 +261,8 @@
     "url": "https://heroesworld.ca/products/booster-box-set-14-hyperia-city-disney-lorcana-tcg"
   },
   "Hobbiesville::9070300004490": {
-    "available": false,
-    "price": 24995.0,
+    "available": true,
+    "price": 21995.0,
     "product_id": "9070300004490",
     "set": "Hyperia City",
     "store": "Hobbiesville",
@@ -442,7 +442,7 @@
   },
   "The Upper Hand::15424346259499": {
     "available": true,
-    "price": 239.95,
+    "price": 229.95,
     "product_id": "15424346259499",
     "set": "Hyperia City",
     "store": "The Upper Hand",
