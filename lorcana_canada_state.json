@@ -226,7 +226,7 @@
   },
   "Gotham Central Comics::15435135254772": {
     "available": true,
-    "price": 8999.0,
+    "price": 10999.0,
     "product_id": "15435135254772",
     "set": "Hyperia City",
     "store": "Gotham Central Comics",
@@ -234,12 +234,12 @@
     "url": "https://www.gothamcentralcomics.com/products/disney-lorcana-hyperia-city-illumineers-trove"
   },
   "Gotham Central Comics::15435142037748": {
-    "available": false,
-    "price": 19999.0,
+    "available": true,
+    "price": 22999.0,
     "product_id": "15435142037748",
     "set": "Hyperia City",
     "store": "Gotham Central Comics",
-    "title": "Disney Lorcana: Hyperia City - Booster Box (ORDER LIMIT)",
+    "title": "Disney Lorcana: Hyperia City - Booster Box",
     "url": "https://www.gothamcentralcomics.com/products/disney-lorcana-hyperia-city-booster-box"
   },
   "Heroes World::9307936555265": {
