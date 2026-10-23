@@ -45,7 +45,7 @@
     "url": "https://store.401games.ca/products/disney-lorcana-into-the-inkdark-illumineers-trove"
   },
   "Amazing Stories::10305307443284": {
-    "available": false,
+    "available": true,
     "price": 17999.0,
     "product_id": "10305307443284",
     "set": "Hyperia City",
@@ -54,7 +54,7 @@
     "url": "https://amazingstoriesgames.ca/products/disney-lorcana-hyperia-city-booster-box"
   },
   "Amazing Stories::10305321402452": {
-    "available": false,
+    "available": true,
     "price": 6999.0,
     "product_id": "10305321402452",
     "set": "Hyperia City",
@@ -482,7 +482,7 @@
     "product_id": "15398966985011",
     "set": "Hyperia City",
     "store": "Tistaminis",
-    "title": "DISNEY LORCANA SET 14 HYPERIA CITY BOOSTER BOX Oct 23 Pre-Order",
+    "title": "DISNEY LORCANA SET 14 HYPERIA CITY BOOSTER BOX",
     "url": "https://tistaminis.com/products/disney-lorcana-set-14-hyperia-city-booster-box"
   },
   "Tistaminis::15398970097971": {
