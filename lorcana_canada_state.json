@@ -495,12 +495,12 @@
     "url": "https://mystic-dragon.ca/products/lorcana-set-14-hyperia-city-illumineers-trove"
   },
   "New Realm Games::9472179142914": {
-    "available": false,
+    "available": true,
     "price": 209.95,
     "product_id": "9472179142914",
     "set": "Hyperia City",
     "store": "New Realm Games",
-    "title": "Disney Lorcana: Hyperia City - Booster Box (Pre Order)",
+    "title": "Disney Lorcana: Hyperia City - Booster Box",
     "url": "https://newrealmgames.com/products/disney-lorcana-hyperia-city-booster-box-pre-order"
   },
   "New Realm Games::9472179372290": {
@@ -509,7 +509,7 @@
     "product_id": "9472179372290",
     "set": "Hyperia City",
     "store": "New Realm Games",
-    "title": "Disney Lorcana: Hyperia City - Trove (Pre Order)",
+    "title": "Disney Lorcana: Hyperia City - Trove",
     "url": "https://newrealmgames.com/products/disney-lorcana-hyperia-city-trove-pre-order"
   },
   "Northern War Table::10326789128278": {
