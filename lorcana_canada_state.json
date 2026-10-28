@@ -27,8 +27,8 @@
     "url": "https://store.401games.ca/products/disney-lorcana-hyperia-city-illumineers-trove"
   },
   "401 Games::8457348186299": {
-    "available": false,
-    "price": 0.0,
+    "available": true,
+    "price": 179.95,
     "product_id": "8457348186299",
     "set": "Into the Inkdark",
     "store": "401 Games",
@@ -36,8 +36,8 @@
     "url": "https://store.401games.ca/products/disney-lorcana-into-the-inkdark-booster-box"
   },
   "401 Games::8457356017851": {
-    "available": false,
-    "price": 0.0,
+    "available": true,
+    "price": 99.95,
     "product_id": "8457356017851",
     "set": "Into the Inkdark",
     "store": "401 Games",
