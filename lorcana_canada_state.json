@@ -558,7 +558,7 @@
     "url": "https://themythicstore.com/products/hyperia-city-illumineers-trove"
   },
   "The Mythic Store::15947742773408": {
-    "available": false,
+    "available": true,
     "price": 159.99,
     "product_id": "15947742773408",
     "set": "Hyperia City",
@@ -567,7 +567,7 @@
     "url": "https://themythicstore.com/products/hyperia-city-hyperia-city-booster-box-fr"
   },
   "The Mythic Store::15947763450016": {
-    "available": false,
+    "available": true,
     "price": 69.99,
     "product_id": "15947763450016",
     "set": "Hyperia City",
