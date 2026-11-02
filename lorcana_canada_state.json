@@ -575,6 +575,15 @@
     "title": "Disney Lorcana: Hyperia City Illumineer's Trove",
     "url": "https://tcgzonecanada.com/products/disney-lorcana-hyperia-city-illumineers-trove"
   },
+  "TCG Zone Canada::8066506391594": {
+    "available": false,
+    "price": 22995.0,
+    "product_id": "8066506391594",
+    "set": "Hyperia City",
+    "store": "TCG Zone Canada",
+    "title": "Disney Lorcana: Hyperia City - Booster Box Ravensburger",
+    "url": "https://tcgzonecanada.com/products/disney-lorcana-hyperia-city-booster-box-ravensburger"
+  },
   "The Mythic Store::15837314384032": {
     "available": true,
     "price": 189.99,
@@ -646,6 +655,24 @@
     "store": "Tistaminis",
     "title": "DISNEY LORCANA SET 14 HYPERIA CITY ILLUMINEER'S TROVE",
     "url": "https://tistaminis.com/products/disney-lorcana-set-14-hyperia-city-illumineers-trove"
+  },
+  "Tistaminis::15463051788595": {
+    "available": false,
+    "price": 70.0,
+    "product_id": "15463051788595",
+    "set": "Into the Inkdark",
+    "store": "Tistaminis",
+    "title": "DISNEY LORCANA SET 15 INTO THE INKDARK TROVE Feb 12 Pre-Order",
+    "url": "https://tistaminis.com/products/disney-lorcana-set-15-into-the-inkdark-trove"
+  },
+  "Tistaminis::15463064240435": {
+    "available": true,
+    "price": 300.0,
+    "product_id": "15463064240435",
+    "set": "Into the Inkdark",
+    "store": "Tistaminis",
+    "title": "DISNEY LORCANA SET 15 INTO THE INKDARK BOOSTER BOX Feb 12 Pre-Order",
+    "url": "https://tistaminis.com/products/disney-lorcana-set-15-into-the-inkdark-booster-box"
   },
   "Untouchables::15440374202462": {
     "available": false,
