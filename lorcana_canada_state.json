@@ -135,7 +135,7 @@
     "url": "https://www.cardboardmemories.ca/products/disney-lorcana-hyperia-city-illumineer-s-trove"
   },
   "Claw Me Baby::15414194962631": {
-    "available": true,
+    "available": false,
     "price": 119.95,
     "product_id": "15414194962631",
     "set": "Hyperia City",
@@ -144,8 +144,8 @@
     "url": "https://www.clawmebaby.ca/products/lorcana-hyperia-city-illumineers-trove"
   },
   "Claw Me Baby::15414196306119": {
-    "available": false,
-    "price": 229.95,
+    "available": true,
+    "price": 199.95,
     "product_id": "15414196306119",
     "set": "Hyperia City",
     "store": "Claw Me Baby",
