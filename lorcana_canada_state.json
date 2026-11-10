@@ -378,7 +378,7 @@
     "url": "https://hopeclubshop.ca/products/disney-lorcana-set-14-hyperia-city-illumineers-trove"
   },
   "Hope Club::8642651586604": {
-    "available": false,
+    "available": true,
     "price": 19999.0,
     "product_id": "8642651586604",
     "set": "Into the Inkdark",
@@ -505,7 +505,7 @@
   },
   "New Realm Games::10451075170562": {
     "available": false,
-    "price": 159.29,
+    "price": 199.95,
     "product_id": "10451075170562",
     "set": "Into the Inkdark",
     "store": "New Realm Games",
