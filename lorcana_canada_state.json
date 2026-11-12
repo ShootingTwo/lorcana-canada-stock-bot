@@ -693,8 +693,8 @@
     "url": "https://tistaminis.com/products/disney-lorcana-set-15-into-the-inkdark-booster-box"
   },
   "Untouchables::15440374202462": {
-    "available": false,
-    "price": 229.95,
+    "available": true,
+    "price": 169.95,
     "product_id": "15440374202462",
     "set": "Hyperia City",
     "store": "Untouchables",
@@ -702,8 +702,8 @@
     "url": "https://untouchables.ca/products/ravensburger-disney-lorcana-hyperia-city-booster-box-preorder"
   },
   "Untouchables::15440381608030": {
-    "available": false,
-    "price": 119.95,
+    "available": true,
+    "price": 79.95,
     "product_id": "15440381608030",
     "set": "Hyperia City",
     "store": "Untouchables",
