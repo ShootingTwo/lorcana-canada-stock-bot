@@ -343,7 +343,7 @@
   },
   "Hobbiesville::16349288857738": {
     "available": false,
-    "price": 17995.0,
+    "price": 16735.0,
     "product_id": "16349288857738",
     "set": "Cosmic Quest",
     "store": "Hobbiesville",
@@ -352,7 +352,7 @@
   },
   "Hobbiesville::9070300004490": {
     "available": true,
-    "price": 20995.0,
+    "price": 19525.0,
     "product_id": "9070300004490",
     "set": "Hyperia City",
     "store": "Hobbiesville",
@@ -370,7 +370,7 @@
   },
   "Hobbiesville::9237841641610": {
     "available": false,
-    "price": 18995.0,
+    "price": 17665.0,
     "product_id": "9237841641610",
     "set": "Into the Inkdark",
     "store": "Hobbiesville",
